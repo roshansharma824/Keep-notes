@@ -13,11 +13,13 @@ import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
+import com.google.accompanist.systemuicontroller.rememberSystemUiController
 
 private val DarkColorPalette = darkColors(
-    primary = Purple200,
-    primaryVariant = Purple700,
-    secondary = Teal200
+    primary = TopBarBackgroundColor,
+    primaryVariant = TopBarBackgroundColor,
+    secondary = TopBarBackgroundColor,
+    background = BackgroundColor
 )
 
 private val LightColorPalette = lightColors(
@@ -33,7 +35,25 @@ fun KeepNotesTheme(
     dynamicColor: Boolean = true,
     content: @Composable () -> Unit
 ) {
-    val colors = if (darkTheme) LightColorPalette else LightColorPalette
+    val systemUiController = rememberSystemUiController()
+    val colors = if (darkTheme) {
+        systemUiController.setNavigationBarColor(
+            color = BackgroundColor
+        )
+        systemUiController.setSystemBarsColor(
+            color = BackgroundColor
+        )
+        DarkColorPalette
+    } else {
+        systemUiController.setNavigationBarColor(
+            color = BackgroundColor
+        )
+        systemUiController.setSystemBarsColor(
+            color = BackgroundColor
+        )
+        DarkColorPalette
+    }
+
 
     MaterialTheme(
         colors = colors,
