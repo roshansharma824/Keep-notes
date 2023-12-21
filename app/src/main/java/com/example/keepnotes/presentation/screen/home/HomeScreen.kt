@@ -29,6 +29,8 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Person
+import androidx.compose.material3.DrawerValue
+import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -45,6 +47,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import com.example.keepnotes.DrawerAppComponent
+import com.example.keepnotes.navigation.screen.NavigationDrawer
 import com.example.keepnotes.ui.theme.BackgroundColor
 import com.example.keepnotes.ui.theme.BlackBackground
 import com.example.keepnotes.ui.theme.*
@@ -56,82 +60,9 @@ fun HomeScreen(
     modifier: Modifier = Modifier,
     navController: NavHostController,
 ) {
-    Scaffold(
-        modifier = Modifier
-            .padding(top = DIMENS_16dp, start = DIMENS_16dp, end = DIMENS_16dp)
-            .background(color = BackgroundColor),
-        topBar = {
-            TopAppBar(
-                backgroundColor = Color.Transparent,
-                contentColor = Color.Transparent,
-                actions = {
-                    IconButton(onClick = { /* do something */ }) {
-                        Icon(
-                            painter = painterResource(id = com.example.keepnotes.R.drawable.icon_grid),
-                            contentDescription = "Grid Icon",
-                            tint = Color.White
-                        )
-                    }
-                    Image(
-                        painter = painterResource(com.example.keepnotes.R.drawable.profile_img),
-                        contentDescription = "profile img",
-                        contentScale = ContentScale.Fit,            // crop the image if it's not a square
-                        modifier = Modifier
-                            .size(34.dp)
-                            .clip(CircleShape)                       // clip to the circle shape
-                            .border(1.dp, Color.Gray, CircleShape)   // add a border (optional)
-                    )
-                },
-                elevation = 0.dp,
-                title = {
-                    Text(
-                        text = "Search yours notes",
 
-                        modifier = Modifier.fillMaxWidth(),
-                        textAlign = TextAlign.Start,
-                        color = Color.White,
-                        fontWeight = FontWeight.Light,
-                        fontSize = TEXT_SIZE_18sp
-                    )
-                },
-                modifier = Modifier.background(
-                    color = TopBarBackgroundColor,
-                    shape = RoundedCornerShape(50)
-                ).padding(end = DIMENS_8dp),
-                navigationIcon = {
-                    IconButton(onClick = { /* do something */ }) {
-                        Icon(
-                            imageVector = Icons.Filled.Menu,
-                            contentDescription = "Localized description",
-                            tint = Color.White
-                        )
-                    }
-                }
-            )
-        },
-        backgroundColor = BackgroundColor,
-    ) { padding ->
-        Column(
-            modifier = modifier
-                .verticalScroll(rememberScrollState())
-                .padding(padding)
-                .background(color = BackgroundColor)
 
-                .fillMaxWidth()
-        ) {
-
-//            Card(
-//                border = BorderStroke(width = 1.dp, color = CardBorder),
-//                modifier = Modifier,
-//                backgroundColor = BackgroundColor
-//            ) {
-//
-//                Text(text = "hello world", modifier = Modifier.padding(DIMENS_16dp))
-//
-//            }
-
-        }
-    }
+    DrawerAppComponent()
 }
 
 @Preview(showBackground = true, showSystemUi = true)
