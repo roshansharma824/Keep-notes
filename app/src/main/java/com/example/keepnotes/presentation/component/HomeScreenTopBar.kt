@@ -1,6 +1,5 @@
 package com.example.keepnotes.presentation.component
 
-import android.service.autofill.OnClickAction
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border

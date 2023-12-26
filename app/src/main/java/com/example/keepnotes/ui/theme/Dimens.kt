@@ -30,6 +30,7 @@ val DIMENS_144dp = 144.dp
 val DIMENS_174dp = 174.dp
 val DIMENS_248dp = 248.dp
 val DIMENS_353dp = 353.dp
+val BottomNavigationHeight = 56.dp
 
 /* Scale Independent */
 val TEXT_SIZE_10sp = 10.sp

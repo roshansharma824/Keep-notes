@@ -10,6 +10,7 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.example.keepnotes.navigation.graph.MainNavGraph
+import com.example.keepnotes.presentation.component.BottomBar
 import com.example.keepnotes.ui.theme.*
 
 @Composable
@@ -22,7 +23,7 @@ fun MainScreen(
                 elevation = DIMENS_32dp,
                 shape = RoundedCornerShape(topStart = DIMENS_16dp, topEnd = DIMENS_16dp)
             ) {
-//                BottomBar(navController = navController)
+                BottomBar(navController = navController)
             }
         },
     ) {
