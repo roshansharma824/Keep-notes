@@ -18,7 +18,7 @@ import androidx.navigation.compose.rememberNavController
 import com.example.keepnotes.navigation.screen.BottomNavItemScreen
 import com.example.keepnotes.ui.theme.BottomBarBackgroundColor
 import com.example.keepnotes.ui.theme.BottomNavigationHeight
-import com.example.keepnotes.ui.theme.DIMENS_24dp
+import com.example.keepnotes.ui.theme.*
 
 @Composable
 fun BottomBar(
