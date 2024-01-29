@@ -11,6 +11,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 sealed class BottomNavItemScreen(val route: String, val icon: ImageVector, val title: String) {
 
     object Home : BottomNavItemScreen("home_screen", Icons.Default.Home, "")
+    object EditNote : BottomNavItemScreen("edit_note_screen", Icons.Default.Home, "")
 
     object CheckListNote : BottomNavItemScreen("check_list_note_screen", Icons.Outlined.Check, "")
 

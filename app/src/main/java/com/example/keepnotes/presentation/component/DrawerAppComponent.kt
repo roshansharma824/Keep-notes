@@ -30,7 +30,11 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 import com.example.keepnotes.R
+import com.example.keepnotes.presentation.screen.note.NoteCardScreen
 import com.example.keepnotes.ui.theme.BackgroundColor
 import com.example.keepnotes.ui.theme.DIMENS_16dp
 import com.example.keepnotes.ui.theme.DIMENS_20dp
@@ -42,7 +46,7 @@ import kotlinx.coroutines.launch
 
 
 @Composable
-fun DrawerAppComponent() {
+fun DrawerAppComponent(navController: NavController) {
     // Reacting to state changes is the core behavior of Compose
     // @remember helps to calculate the value passed to it only
     // during the first composition. It then
@@ -80,7 +84,7 @@ fun DrawerAppComponent() {
             // based on the value stored in currentScreen.
             BodyContentComponent(currentScreen = currentScreen.value, openDrawer = {
                 coroutineScope.launch { drawerState.open() }
-            })
+            }, navController = navController)
         })
 }
 
@@ -156,18 +160,23 @@ fun DrawerContentComponent(
                                 DrawerAppScreen.Reminders.toString() -> {
                                     painterResource(R.drawable.icon_bell)
                                 }
+
                                 DrawerAppScreen.CreateNewLable.toString() -> {
                                     painterResource(R.drawable.icon_plus)
                                 }
+
                                 DrawerAppScreen.Archive.toString() -> {
                                     painterResource(R.drawable.outline_archive_24)
                                 }
+
                                 DrawerAppScreen.Deleted.toString() -> {
                                     painterResource(R.drawable.icon_delete)
                                 }
+
                                 DrawerAppScreen.Settings.toString() -> {
                                     painterResource(R.drawable.icon_setting)
                                 }
+
                                 DrawerAppScreen.HelpFeedback.toString() -> {
                                     painterResource(R.drawable.icon_help_feedback)
                                 }
@@ -211,11 +220,12 @@ fun getScreenBasedOnIndex(index: Int) = when (index) {
 
 @Composable
 fun BodyContentComponent(
-    currentScreen: DrawerAppScreen, openDrawer: () -> Unit
+    currentScreen: DrawerAppScreen, openDrawer: () -> Unit, navController: NavController
 ) {
     when (currentScreen) {
         DrawerAppScreen.Notes -> Screen1Component(
-            openDrawer
+            openDrawer,
+            navController
         )
 
         DrawerAppScreen.Reminders -> Screen2Component(
@@ -225,29 +235,38 @@ fun BodyContentComponent(
         DrawerAppScreen.CreateNewLable -> Screen3Component(
             openDrawer
         )
+
         DrawerAppScreen.Archive -> Screen1Component(
-            openDrawer
+            openDrawer,
+            navController
         )
+
         DrawerAppScreen.Deleted -> Screen1Component(
-            openDrawer
+            openDrawer,
+            navController
         )
+
         DrawerAppScreen.Settings -> Screen1Component(
-            openDrawer
+            openDrawer,
+            navController
         )
+
         DrawerAppScreen.HelpFeedback -> Screen1Component(
-            openDrawer
+            openDrawer,
+            navController
         )
 
         else -> {
             Screen1Component(
-                openDrawer
+                openDrawer,
+                navController
             )
         }
     }
 }
 
 @Composable
-fun Screen1Component(openDrawer: () -> Unit) {
+fun Screen1Component(openDrawer: () -> Unit, navController: NavController) {
     Column(modifier = Modifier.fillMaxSize()) {
         // TopAppBar has slots for a title, navigation icon,
         // and actions. Also known as the action bar.
@@ -257,7 +276,7 @@ fun Screen1Component(openDrawer: () -> Unit) {
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally,
                 content = {
-                    Text(text = "Keep Notes 1")
+                    NoteCardScreen(navController = navController)
                 })
         }
     }
@@ -300,5 +319,5 @@ enum class DrawerAppScreen {
 @Preview
 @Composable
 fun DrawerAppComponentPreview() {
-    DrawerAppComponent()
+    DrawerAppComponent(navController = rememberNavController())
 }
