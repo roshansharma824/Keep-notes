@@ -27,6 +27,7 @@ fun BottomBar(
 ) {
     val navigationItems = listOf(
         BottomNavItemScreen.Home,
+        BottomNavItemScreen.EditNote,
         BottomNavItemScreen.CheckListNote,
         BottomNavItemScreen.DrawNote,
         BottomNavItemScreen.VoiceNote,

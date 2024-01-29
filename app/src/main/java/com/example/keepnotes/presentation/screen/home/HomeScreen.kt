@@ -15,7 +15,7 @@ fun HomeScreen(
 ) {
 
 
-    DrawerAppComponent()
+    DrawerAppComponent(navController = navController)
 }
 
 @Preview(showBackground = true, showSystemUi = true)

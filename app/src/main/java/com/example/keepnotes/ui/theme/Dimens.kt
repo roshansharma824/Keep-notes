@@ -4,6 +4,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 /* Density Independent */
+val DIMENS_0dp = 0.dp
 val DIMENS_1dp = 1.dp
 val DIMENS_2dp = 2.dp
 val DIMENS_4dp = 4.dp
@@ -35,6 +36,7 @@ val BottomNavigationHeight = 56.dp
 /* Scale Independent */
 val TEXT_SIZE_10sp = 10.sp
 val TEXT_SIZE_12sp = 12.sp
+val TEXT_SIZE_14sp = 14.sp
 val TEXT_SIZE_16sp = 16.sp
 val TEXT_SIZE_18sp = 18.sp
 val TEXT_SIZE_24sp = 24.sp

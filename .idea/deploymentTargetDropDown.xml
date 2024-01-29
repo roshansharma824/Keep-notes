@@ -5,6 +5,12 @@
       <entry key="BottomBarPreview">
         <State />
       </entry>
+      <entry key="EditNoteScreenPreview">
+        <State />
+      </entry>
+      <entry key="NoteCardPreview">
+        <State />
+      </entry>
       <entry key="app">
         <State />
       </entry>

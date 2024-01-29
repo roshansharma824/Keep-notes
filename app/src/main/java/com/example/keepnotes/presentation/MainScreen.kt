@@ -2,6 +2,7 @@ package com.example.keepnotes.presentation
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
@@ -15,11 +16,11 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.example.keepnotes.navigation.graph.MainNavGraph
+import com.example.keepnotes.navigation.screen.Screen
 import com.example.keepnotes.presentation.component.BottomBar
 import com.example.keepnotes.ui.theme.BackgroundColor
 import com.example.keepnotes.ui.theme.BottomBarBackgroundColor
@@ -50,7 +51,9 @@ fun MainScreen(
                     )
                 ).size(DIMENS_64dp).border(shape = RoundedCornerShape(
                     DIMENS_16dp
-                ), width = DIMENS_8dp, color = BackgroundColor),
+                ), width = DIMENS_8dp, color = BackgroundColor).clickable {
+                    navController.navigate(Screen.EditNote.passNoteId(noteId = -1))
+                },
                 contentAlignment = Alignment.Center
             ) {
                 Icon(imageVector = Icons.Default.Add, contentDescription = "New Note", modifier = Modifier.size(
