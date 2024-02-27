@@ -1,48 +1,41 @@
 package com.example.keepnotes.presentation.screen.editnote
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
+
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Icon
-import androidx.compose.material.Surface
+import androidx.compose.material.Scaffold
+import androidx.compose.material.TextField
+import androidx.compose.material.TextFieldDefaults
 import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowLeft
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.ui.Alignment
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.RectangleShape
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.focus.onFocusChanged
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.example.keepnotes.domain.model.Note
-import com.example.keepnotes.presentation.component.BottomBar
 import com.example.keepnotes.ui.theme.BackgroundColor
-import com.example.keepnotes.ui.theme.DIMENS_16dp
-import com.example.keepnotes.ui.theme.DIMENS_32dp
 import com.example.keepnotes.ui.theme.DIMENS_40dp
 import com.example.keepnotes.ui.theme.GrayTextColor
-import com.example.keepnotes.ui.theme.TEXT_SIZE_14sp
-import com.example.keepnotes.ui.theme.TEXT_SIZE_18sp
 import com.example.keepnotes.utils.DummyData
+import com.example.keepnotes.utils.canGoBack
 
 
 @Composable
@@ -50,123 +43,122 @@ fun EditNoteScreen(
     navController: NavController,
     noteId: Int? = -1
 ) {
+    var titleInput by remember { mutableStateOf("") }
+    var noteInput by remember { mutableStateOf("") }
 
-
-    val titleInput = remember { mutableStateOf("") }
-    val noteInput = remember { mutableStateOf("") }
+    val note: Note?
     if (noteId != null && noteId != -1) {
-        val note = DummyData.items.filter { note ->
+        val listNote = DummyData.items.filter { note ->
             note.id == noteId
         }
-        titleInput.value = note[0].title
-        noteInput.value = note[0].note
+        note = listNote[0]
+        titleInput = note.title
+        noteInput = note.note
 
     } else {
-//        titleInput.value = "noteId"
+        note = Note(Math.random().toInt(), "", "")
     }
 
-    androidx.compose.material.Scaffold(
+    Scaffold(
         topBar = {
             TopAppBar(backgroundColor = BackgroundColor) {
                 Icon(
                     imageVector = Icons.Default.KeyboardArrowLeft,
-                    contentDescription = "New Note",
+                    contentDescription = "back arrow",
                     tint = GrayTextColor,
                     modifier = Modifier
                         .size(
                             DIMENS_40dp
                         )
                         .clickable {
-                            navController.popBackStack()
+                            if (navController.canGoBack) {
+                                navController.popBackStack()
+                            }
+
                         }
                 )
             }
         },
-//        bottomBar = {
-//            Surface(
-//                elevation = DIMENS_32dp,
-//                shape = RectangleShape
-//            ) {
-//                Row {
-//
-//                }
-//            }
-//        },
-    ) { it ->
+    ) {
+
+
         Column(
             modifier = Modifier
+                .fillMaxSize()
                 .padding(it)
-                .background(color = BackgroundColor)
-                .fillMaxWidth()
-                .fillMaxHeight(),
-            horizontalAlignment = Alignment.Start,
-            verticalArrangement = Arrangement.Top
         ) {
-            Text(
-                text = titleInput.value.ifEmpty { "Title" },
-                style = TextStyle(
-                    fontSize = TEXT_SIZE_18sp,
-                    lineHeight = 20.sp,
 
-                    fontWeight = FontWeight(400),
-                    color = GrayTextColor,
-                    textAlign = TextAlign.Left
-                ),
-                textAlign = TextAlign.Left,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(DIMENS_16dp)
-            )
-            BasicTextField(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .border(color = Color.Green, width = 2.dp),
-                value = titleInput.value,
-                onValueChange = { titleInput.value = it },
-                decorationBox = {},
-                textStyle = TextStyle(
-                    fontSize = TEXT_SIZE_18sp,
-                    lineHeight = 20.sp,
 
-                    fontWeight = FontWeight(400),
-                    color = GrayTextColor,
-                    textAlign = TextAlign.Left
-                ),
-            )
-
-            Text(
-                text = noteInput.value.ifEmpty { "Note" },
-                style = TextStyle(
-                    fontSize = TEXT_SIZE_14sp,
-                    lineHeight = 20.sp,
-
-                    fontWeight = FontWeight(400),
-                    color = GrayTextColor,
-                    textAlign = TextAlign.Left,
-                ),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(DIMENS_16dp)
-            )
-            BasicTextField(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .border(color = Color.Green, width = 2.dp),
-                value = noteInput.value,
-                onValueChange = { noteInput.value = it },
-                decorationBox = {},
-                textStyle = TextStyle(
-                    fontSize = TEXT_SIZE_18sp,
-                    lineHeight = 20.sp,
-
-                    fontWeight = FontWeight(400),
-                    color = GrayTextColor,
-                    textAlign = TextAlign.Left
-                ),
-            )
+            // Editable text
+            EditableTextField(text = titleInput, placeholderText = "Title") { newText ->
+                titleInput = newText
+                note.title = newText
+            }
+            // Editable text
+            EditableTextField(text = noteInput, placeholderText = "Note") { newText ->
+                noteInput = newText
+                note.note = newText
+            }
         }
     }
 
+
+}
+
+@Composable
+fun EditableTextField(
+    text: String,
+    placeholderText: String,
+    onTextChanged: (String) -> Unit
+) {
+    var isKeyboardVisible by remember { mutableStateOf(false) }
+
+    TextField(
+        value = text,
+        onValueChange = {
+            onTextChanged(it)
+        },
+        placeholder = {
+            Text(
+                text = placeholderText,
+                style = if (placeholderText == "Title")
+                    MaterialTheme.typography.headlineSmall.copy(color = GrayTextColor.copy(alpha = 0.5f))
+                else
+                    MaterialTheme.typography.titleMedium.copy(color = GrayTextColor.copy(alpha = 0.5f)),
+            )
+        },
+        textStyle = if (placeholderText == "Title") MaterialTheme.typography.headlineSmall.copy(
+            color = GrayTextColor
+        ) else MaterialTheme.typography.titleMedium.copy(color = GrayTextColor),
+        modifier = Modifier
+            .fillMaxWidth()
+            .onFocusChanged { isKeyboardVisible = it.isFocused },
+        colors = TextFieldDefaults.outlinedTextFieldColors(
+            backgroundColor = BackgroundColor,
+            focusedBorderColor = BackgroundColor,
+            unfocusedBorderColor = BackgroundColor,
+            focusedLabelColor = BackgroundColor,
+            cursorColor = GrayTextColor,
+        ),
+        keyboardOptions = KeyboardOptions.Default.copy(
+            imeAction = ImeAction.Done
+        ),
+        keyboardActions = KeyboardActions(
+            onDone = {
+                isKeyboardVisible = false
+            }
+        )
+    )
+
+    DisposableEffect(Unit) {
+        onDispose {
+            // Cleanup, e.g., close keyboard when the composable is disposed
+            if (isKeyboardVisible) {
+                // Close keyboard
+                isKeyboardVisible = false
+            }
+        }
+    }
 }
 
 
