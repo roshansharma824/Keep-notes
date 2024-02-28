@@ -1,7 +1,10 @@
 package com.example.keepnotes.presentation.screen.note
 
+import android.util.Log
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -16,6 +19,8 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.TextStyle
@@ -23,6 +28,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.keepnotes.domain.model.Note
@@ -36,12 +42,15 @@ import com.example.keepnotes.ui.theme.DIMENS_8dp
 import com.example.keepnotes.ui.theme.GrayTextColor
 import com.example.keepnotes.ui.theme.TEXT_SIZE_14sp
 import com.example.keepnotes.ui.theme.TEXT_SIZE_18sp
-import com.example.keepnotes.utils.DummyData
 
 
 @Composable
-fun NoteCardScreen(navController: NavController) {
+fun AllNotesScreen(
+    navController: NavController,
+    allNotesViewModel: AllNotesViewModel = hiltViewModel()
+) {
 
+    val allNotes by allNotesViewModel.allNotesList.collectAsState()
 
 
     LazyVerticalStaggeredGrid(
@@ -52,24 +61,34 @@ fun NoteCardScreen(navController: NavController) {
 
         verticalItemSpacing = DIMENS_8dp
     ) {
-        items(DummyData.items) { item ->
-            NoteCard(item = item, navController = navController)
+        items(allNotes) { item ->
+            Log.d("AllNotes","${item.id}")
+            NoteCard(item = item, navController = navController, allNotesViewModel)
         }
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
-fun NoteCard(item: Note, navController: NavController) {
+fun NoteCard(item: Note, navController: NavController, allNotesViewModel: AllNotesViewModel) {
+
+
 
     Card(
-        onClick = { navController.navigate(Screen.EditNote.passNoteId(noteId = item.id)) },
         border = BorderStroke(width = DIMENS_0dp, color = CardBorder),
-        shape = RoundedCornerShape(size = DIMENS_8dp)
+        shape = RoundedCornerShape(size = DIMENS_8dp),
+        modifier = Modifier.combinedClickable(
+            onClick = {
+                navController.navigate(Screen.EditNote.passNoteId(noteId = item.id))
+            },
+            onLongClick = {
+                allNotesViewModel.deleteNote(item)
+            },
+        )
     ) {
         Column(
             verticalArrangement = Arrangement.spacedBy(DIMENS_16dp, Alignment.Top),
-            horizontalAlignment = Alignment.CenterHorizontally,
+            horizontalAlignment = Alignment.Start,
             modifier = Modifier
 
                 .fillMaxWidth()
@@ -116,5 +135,5 @@ fun NoteCard(item: Note, navController: NavController) {
 @Preview(showBackground = true)
 @Composable
 fun NoteCardPreview() {
-    NoteCardScreen(navController = rememberNavController())
+    AllNotesScreen(navController = rememberNavController())
 }
