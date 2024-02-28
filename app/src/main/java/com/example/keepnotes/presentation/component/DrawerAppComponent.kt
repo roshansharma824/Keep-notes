@@ -31,10 +31,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.example.keepnotes.R
-import com.example.keepnotes.presentation.screen.note.NoteCardScreen
+import com.example.keepnotes.presentation.screen.note.AllNotesScreen
 import com.example.keepnotes.ui.theme.BackgroundColor
 import com.example.keepnotes.ui.theme.DIMENS_16dp
 import com.example.keepnotes.ui.theme.DIMENS_20dp
@@ -276,7 +275,7 @@ fun Screen1Component(openDrawer: () -> Unit, navController: NavController) {
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally,
                 content = {
-                    NoteCardScreen(navController = navController)
+                    AllNotesScreen(navController = navController)
                 })
         }
     }

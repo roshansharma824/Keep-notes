@@ -1,6 +1,7 @@
 package com.example.keepnotes.presentation.screen.editnote
 
 
+import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -20,6 +21,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -28,6 +30,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.keepnotes.domain.model.Note
@@ -41,22 +44,33 @@ import com.example.keepnotes.utils.canGoBack
 @Composable
 fun EditNoteScreen(
     navController: NavController,
-    noteId: Int? = -1
+    noteId: Int = -1,
+    editNoteViewModel: EditNoteViewModel = hiltViewModel()
 ) {
     var titleInput by remember { mutableStateOf("") }
     var noteInput by remember { mutableStateOf("") }
 
-    val note: Note?
-    if (noteId != null && noteId != -1) {
-        val listNote = DummyData.items.filter { note ->
-            note.id == noteId
-        }
-        note = listNote[0]
+//    val note: Note?
+//    if (noteId != null && noteId != -1) {
+//        val listNote = DummyData.items.filter { note ->
+//            note.id == noteId
+//        }
+//        note = listNote[0]
+//        titleInput = note.title
+//        noteInput = note.note
+//
+//    } else {
+//        note = Note(Math.random().toInt(), "", "")
+//    }
+
+
+    val note by editNoteViewModel.getNote.collectAsState()
+
+    if (noteId != -1) {
+        editNoteViewModel.getNote(noteId)
+
         titleInput = note.title
         noteInput = note.note
-
-    } else {
-        note = Note(Math.random().toInt(), "", "")
     }
 
     Scaffold(
@@ -99,6 +113,25 @@ fun EditNoteScreen(
                 noteInput = newText
                 note.note = newText
             }
+        }
+    }
+
+    DisposableEffect(Unit) {
+        onDispose {
+            if (titleInput.isNotEmpty() && noteInput.isNotEmpty()) {
+                if (note.id == -1) {
+
+                    val newNote =
+                        Note(id = Math.random().toInt(), title = titleInput, note = noteInput)
+                    editNoteViewModel.addNote(newNote)
+                } else {
+
+                    val newNote = Note(id = note.id, title = titleInput, note = noteInput)
+                    editNoteViewModel.updateNote(newNote)
+                }
+
+            }
+
         }
     }
 

@@ -56,7 +56,9 @@ fun NavGraphBuilder.detailsNavGraph(navHostController: NavHostController) {
             })
         ) { backStackEntry ->
             val noteId = backStackEntry.arguments?.getInt(NOTE_ARGUMENT_KEY)
-            EditNoteScreen(navController = navHostController,noteId = noteId)
+            if (noteId != null) {
+                EditNoteScreen(navController = navHostController,noteId = noteId)
+            }
         }
     }
 }
