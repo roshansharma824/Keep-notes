@@ -33,15 +33,7 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.keepnotes.domain.model.Note
 import com.example.keepnotes.navigation.screen.Screen
-import com.example.keepnotes.ui.theme.BackgroundColor
-import com.example.keepnotes.ui.theme.CardBorder
-import com.example.keepnotes.ui.theme.DIMENS_0dp
-import com.example.keepnotes.ui.theme.DIMENS_12dp
-import com.example.keepnotes.ui.theme.DIMENS_16dp
-import com.example.keepnotes.ui.theme.DIMENS_8dp
-import com.example.keepnotes.ui.theme.GrayTextColor
-import com.example.keepnotes.ui.theme.TEXT_SIZE_14sp
-import com.example.keepnotes.ui.theme.TEXT_SIZE_18sp
+import com.example.keepnotes.ui.theme.*
 
 
 @Composable
@@ -68,14 +60,14 @@ fun AllNotesScreen(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun NoteCard(item: Note, navController: NavController, allNotesViewModel: AllNotesViewModel) {
 
 
 
     Card(
-        border = BorderStroke(width = DIMENS_0dp, color = CardBorder),
+        border = BorderStroke(width = DIMENS_1dp, color = CardBorder),
         shape = RoundedCornerShape(size = DIMENS_8dp),
         modifier = Modifier.combinedClickable(
             onClick = {

@@ -1,7 +1,6 @@
 package com.example.keepnotes.presentation.screen.editnote
 
 
-import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -37,7 +36,6 @@ import com.example.keepnotes.domain.model.Note
 import com.example.keepnotes.ui.theme.BackgroundColor
 import com.example.keepnotes.ui.theme.DIMENS_40dp
 import com.example.keepnotes.ui.theme.GrayTextColor
-import com.example.keepnotes.utils.DummyData
 import com.example.keepnotes.utils.canGoBack
 
 
@@ -50,18 +48,6 @@ fun EditNoteScreen(
     var titleInput by remember { mutableStateOf("") }
     var noteInput by remember { mutableStateOf("") }
 
-//    val note: Note?
-//    if (noteId != null && noteId != -1) {
-//        val listNote = DummyData.items.filter { note ->
-//            note.id == noteId
-//        }
-//        note = listNote[0]
-//        titleInput = note.title
-//        noteInput = note.note
-//
-//    } else {
-//        note = Note(Math.random().toInt(), "", "")
-//    }
 
 
     val note by editNoteViewModel.getNote.collectAsState()
@@ -106,12 +92,12 @@ fun EditNoteScreen(
             // Editable text
             EditableTextField(text = titleInput, placeholderText = "Title") { newText ->
                 titleInput = newText
-                note.title = newText
+                editNoteViewModel.updateTitle( newText)
             }
             // Editable text
             EditableTextField(text = noteInput, placeholderText = "Note") { newText ->
                 noteInput = newText
-                note.note = newText
+                editNoteViewModel.updateNote( newText)
             }
         }
     }
@@ -125,9 +111,7 @@ fun EditNoteScreen(
                         Note(id = Math.random().toInt(), title = titleInput, note = noteInput)
                     editNoteViewModel.addNote(newNote)
                 } else {
-
-                    val newNote = Note(id = note.id, title = titleInput, note = noteInput)
-                    editNoteViewModel.updateNote(newNote)
+                    editNoteViewModel.updateNote()
                 }
 
             }
