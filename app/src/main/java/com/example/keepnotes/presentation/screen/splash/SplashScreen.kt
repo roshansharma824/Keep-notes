@@ -23,6 +23,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.example.keepnotes.R
 import com.example.keepnotes.navigation.graph.Graph
+import com.example.keepnotes.navigation.screen.Screen
 import com.example.keepnotes.ui.theme.BlackBackground
 import kotlinx.coroutines.delay
 
@@ -49,7 +50,7 @@ fun SplashScreen(
         delay(1200L)
         navController.popBackStack()
 
-        if (onBoardingIsCompleted) navController.navigate(Graph.MAIN)
+        if (onBoardingIsCompleted) navController.navigate(Screen.Login.route)
         else {
 //            navController.navigate(Screen.OnBoarding.route)
         }
