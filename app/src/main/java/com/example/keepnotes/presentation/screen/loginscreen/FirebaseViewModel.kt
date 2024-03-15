@@ -9,6 +9,7 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.keepnotes.data.auth.UserData
+import com.example.keepnotes.data.local.InMemoryCache
 import com.google.firebase.Firebase
 import com.google.firebase.database.database
 import com.google.firebase.firestore.FieldValue
@@ -16,6 +17,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ListenerRegistration
 import com.google.firebase.firestore.Query
 import com.google.firebase.storage.storage
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -44,7 +46,7 @@ class FirebaseViewModel(
     var sentBy by mutableStateOf("")
     var imageDialogProfilePicture by mutableStateOf("")
 
-        private var firebase: FirebaseFirestore = FirebaseFirestore.getInstance()
+    private var firebase: FirebaseFirestore = FirebaseFirestore.getInstance()
     private val _chatListUsers = MutableStateFlow<List<UserData>>(emptyList())
     val chatListUsers: StateFlow<List<UserData>> = _chatListUsers
     private val _favorites = MutableStateFlow<List<UserData>>(emptyList())
@@ -64,6 +66,7 @@ class FirebaseViewModel(
 
     init {
         addUserToFirestore(userData)
+        InMemoryCache.userData = userData
 //        getToken()
         viewModelScope.launch {
             delay(5000)
@@ -165,19 +168,11 @@ class FirebaseViewModel(
                 firebase.collection("users").document(user.userId.toString())
                     .set(user)
                     .await()
-                firebase.collection("users").document(user.userId.toString())
-                    .update("chatList", emptyList<String>())
-                    .await()
             }else{
                 val currentUser = userQuery.toObject(UserData::class.java)
                 userData.bio = currentUser?.bio.toString()
                 profilePicture = currentUser?.profilePictureUrl.toString()
                 Bio = currentUser?.bio.toString()
-                userData.status = currentUser?.status.toString()
-                if(!currentUser?.status.isNullOrEmpty()){
-                    curUserStatus = true
-                }
-                userData.blocked = currentUser?.blocked
             }
         }
     }

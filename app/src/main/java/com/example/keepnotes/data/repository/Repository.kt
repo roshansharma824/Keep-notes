@@ -1,6 +1,7 @@
 package com.example.keepnotes.data.repository
 
 import com.example.keepnotes.domain.model.Note
+import com.example.keepnotes.domain.model.RealtimeModelResponse
 import com.example.keepnotes.domain.repository.LocalDataSource
 import javax.inject.Inject
 
@@ -14,7 +15,19 @@ class Repository @Inject constructor(
 
     suspend fun deleteNote(note: Note) = localDataSource.deleteNote(note)
 
-    suspend fun getNote(id: Int) = localDataSource.getNote(id)
+    fun getNote(id: Int) = localDataSource.getNote(id)
 
-    suspend fun getAllNote() = localDataSource.getAllNote()
+    fun getAllNote() = localDataSource.getAllNote()
+
+    fun insert(item: RealtimeModelResponse.RealtimeItems) = localDataSource.insert(item)
+
+    fun getItems() = localDataSource.getItems()
+    fun delete(
+        key: String
+    ) = localDataSource.delete(key = key)
+
+    fun update(
+        res: RealtimeModelResponse
+    ) = localDataSource.update(res)
+
 }

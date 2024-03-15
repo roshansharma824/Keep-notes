@@ -16,11 +16,8 @@ import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.foundation.lazy.staggeredgrid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.TextStyle
@@ -31,19 +28,21 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
-import com.example.keepnotes.domain.model.Note
+import com.example.keepnotes.domain.model.RealtimeModelResponse
 import com.example.keepnotes.navigation.screen.Screen
+import com.example.keepnotes.presentation.screen.RealtimeViewModel
 import com.example.keepnotes.ui.theme.*
 
 
 @Composable
 fun AllNotesScreen(
     navController: NavController,
-    allNotesViewModel: AllNotesViewModel = hiltViewModel()
+    allNotesViewModel: AllNotesViewModel = hiltViewModel(),
+    realtimeViewModel: RealtimeViewModel = hiltViewModel()
 ) {
 
-    val allNotes by allNotesViewModel.allNotesList.collectAsState()
-
+//    val allNotes by allNotesViewModel.allNotesList.collectAsState()
+    val res = realtimeViewModel.res.value
 
     LazyVerticalStaggeredGrid(
         columns = StaggeredGridCells.Fixed(2),
@@ -53,8 +52,8 @@ fun AllNotesScreen(
 
         verticalItemSpacing = DIMENS_8dp
     ) {
-        items(allNotes) { item ->
-            Log.d("AllNotes","${item.id}")
+        items(res.item, key = { it.key!! }) { item ->
+            Log.d("AllNotes","${item.key}")
             NoteCard(item = item, navController = navController, allNotesViewModel)
         }
     }
@@ -62,8 +61,7 @@ fun AllNotesScreen(
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun NoteCard(item: Note, navController: NavController, allNotesViewModel: AllNotesViewModel) {
-
+fun NoteCard(item: RealtimeModelResponse, navController: NavController, allNotesViewModel: AllNotesViewModel) {
 
 
     Card(
@@ -71,10 +69,10 @@ fun NoteCard(item: Note, navController: NavController, allNotesViewModel: AllNot
         shape = RoundedCornerShape(size = DIMENS_8dp),
         modifier = Modifier.combinedClickable(
             onClick = {
-                navController.navigate(Screen.EditNote.passNoteId(noteId = item.id))
+                navController.navigate(Screen.EditNote.passNoteId(noteId = -1))
             },
             onLongClick = {
-                allNotesViewModel.deleteNote(item)
+//                allNotesViewModel.deleteNote(item)
             },
         )
     ) {
@@ -94,7 +92,7 @@ fun NoteCard(item: Note, navController: NavController, allNotesViewModel: AllNot
                 )
         ) {
             Text(
-                text = item.title,
+                text = item.item?.title!!,
                 style = TextStyle(
                     fontSize = TEXT_SIZE_18sp,
                     lineHeight = 20.sp,
@@ -107,7 +105,7 @@ fun NoteCard(item: Note, navController: NavController, allNotesViewModel: AllNot
             )
 
             Text(
-                text = item.note,
+                text = item.item.note!!,
                 style = TextStyle(
                     fontSize = TEXT_SIZE_14sp,
                     lineHeight = 20.sp,

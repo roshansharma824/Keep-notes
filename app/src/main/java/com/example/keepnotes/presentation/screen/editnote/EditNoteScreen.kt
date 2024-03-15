@@ -32,7 +32,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.example.keepnotes.data.local.InMemoryCache
 import com.example.keepnotes.domain.model.Note
+import com.example.keepnotes.domain.model.RealtimeModelResponse
+import com.example.keepnotes.presentation.screen.RealtimeViewModel
 import com.example.keepnotes.ui.theme.BackgroundColor
 import com.example.keepnotes.ui.theme.DIMENS_40dp
 import com.example.keepnotes.ui.theme.GrayTextColor
@@ -43,10 +46,12 @@ import com.example.keepnotes.utils.canGoBack
 fun EditNoteScreen(
     navController: NavController,
     noteId: Int = -1,
-    editNoteViewModel: EditNoteViewModel = hiltViewModel()
+    editNoteViewModel: EditNoteViewModel = hiltViewModel(),
+    realtimeViewModel: RealtimeViewModel = hiltViewModel()
 ) {
     var titleInput by remember { mutableStateOf("") }
     var noteInput by remember { mutableStateOf("") }
+    val isDialog = remember { mutableStateOf(false) }
 
 
 
@@ -110,6 +115,13 @@ fun EditNoteScreen(
                     val newNote =
                         Note(id = Math.random().toInt(), title = titleInput, note = noteInput)
                     editNoteViewModel.addNote(newNote)
+                    realtimeViewModel.insert(
+                        RealtimeModelResponse.RealtimeItems(
+                            userId = InMemoryCache.userData.userId,
+                            title = titleInput,
+                            note = noteInput
+                        )
+                    )
                 } else {
                     editNoteViewModel.updateNote()
                 }

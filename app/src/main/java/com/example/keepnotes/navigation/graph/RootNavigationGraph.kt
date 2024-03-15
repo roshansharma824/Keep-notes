@@ -22,7 +22,6 @@ import com.example.keepnotes.presentation.MainScreen
 import com.example.keepnotes.presentation.screen.loginscreen.FirebaseViewModel
 import com.example.keepnotes.presentation.screen.loginscreen.LoginScreen
 import com.example.keepnotes.presentation.screen.loginscreen.SignInViewModel
-import com.example.keepnotes.presentation.screen.loginscreen.TaskViewModel
 import com.example.keepnotes.presentation.screen.splash.SplashScreen
 import com.google.android.gms.auth.api.identity.Identity
 import kotlinx.coroutines.launch

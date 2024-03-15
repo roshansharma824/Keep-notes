@@ -23,7 +23,7 @@ class AllNotesViewModel @Inject constructor(
     init {
         viewModelScope.launch(Dispatchers.IO) {
             useCases.getAllNoteUseCase.invoke().collect{ notes ->
-                _allNotesList.value = notes
+//                _allNotesList.value = notes
             }
         }
     }
