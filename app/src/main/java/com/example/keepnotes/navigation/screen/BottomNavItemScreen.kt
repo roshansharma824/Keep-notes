@@ -10,14 +10,14 @@ import androidx.compose.ui.graphics.vector.ImageVector
 
 sealed class BottomNavItemScreen(val route: String, val icon: ImageVector, val title: String) {
 
-    object Home : BottomNavItemScreen("home_screen", Icons.Default.Home, "")
-    object EditNote : BottomNavItemScreen("edit_note_screen", Icons.Default.Home, "")
+    data object Home : BottomNavItemScreen("home_screen", Icons.Default.Home, "")
+    data object EditNote : BottomNavItemScreen("edit_note_screen", Icons.Default.Home, "")
 
-    object CheckListNote : BottomNavItemScreen("check_list_note_screen", Icons.Outlined.Check, "")
+    data object CheckListNote : BottomNavItemScreen("check_list_note_screen", Icons.Outlined.Check, "")
 
-    object DrawNote : BottomNavItemScreen("draw_note_screen", Icons.Default.Edit, "")
+    data object DrawNote : BottomNavItemScreen("draw_note_screen", Icons.Default.Edit, "")
 
-    object VoiceNote : BottomNavItemScreen("voice_note_screen", Icons.Default.Call, "")
-    object PictureNote : BottomNavItemScreen("picture_note_screen", Icons.Default.PlayArrow, "")
+    data object VoiceNote : BottomNavItemScreen("voice_note_screen", Icons.Default.Call, "")
+    data object PictureNote : BottomNavItemScreen("picture_note_screen", Icons.Default.PlayArrow, "")
 
 }

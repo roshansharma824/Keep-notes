@@ -45,7 +45,7 @@ import com.example.keepnotes.utils.canGoBack
 @Composable
 fun EditNoteScreen(
     navController: NavController,
-    noteId: Int = -1,
+    noteId: String? = "-1",
     editNoteViewModel: EditNoteViewModel = hiltViewModel(),
     realtimeViewModel: RealtimeViewModel = hiltViewModel()
 ) {
@@ -57,8 +57,8 @@ fun EditNoteScreen(
 
     val note by editNoteViewModel.getNote.collectAsState()
 
-    if (noteId != -1) {
-        editNoteViewModel.getNote(noteId)
+    if (noteId.isNullOrEmpty()) {
+//        editNoteViewModel.getNote(noteId)
 
         titleInput = note.title
         noteInput = note.note
