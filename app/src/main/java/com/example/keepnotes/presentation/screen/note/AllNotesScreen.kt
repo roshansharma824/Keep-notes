@@ -18,6 +18,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.TextStyle
@@ -28,9 +29,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
-import com.example.keepnotes.domain.model.ItemState
 import com.example.keepnotes.domain.model.RealtimeModelResponse
-import com.example.keepnotes.domain.model.ResultState
 import com.example.keepnotes.navigation.screen.Screen
 import com.example.keepnotes.presentation.common.ProgressIndicator
 import com.example.keepnotes.presentation.screen.RealtimeViewModel
@@ -45,7 +44,7 @@ fun AllNotesScreen(
 ) {
 
 //    val allNotes by allNotesViewModel.allNotesList.collectAsState()
-    val res = realtimeViewModel.res
+    val res = realtimeViewModel.res.collectAsState()
 
     if (res.value.isLoading){
         ProgressIndicator()
@@ -60,7 +59,7 @@ fun AllNotesScreen(
         ) {
             items(res.value.item, key = { it.key!! }) { item ->
                 Log.d("AllNotes","${item.key}")
-                NoteCard(item = item, navController = navController, allNotesViewModel)
+                NoteCard(item = item, navController = navController, realtimeViewModel)
             }
         }
     }
@@ -70,7 +69,7 @@ fun AllNotesScreen(
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun NoteCard(item: RealtimeModelResponse, navController: NavController, allNotesViewModel: AllNotesViewModel) {
+fun NoteCard(item: RealtimeModelResponse, navController: NavController, realtimeViewModel: RealtimeViewModel) {
 
 
     Card(

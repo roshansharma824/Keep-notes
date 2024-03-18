@@ -19,6 +19,8 @@ interface LocalDataSource {
 
     fun getItems(): Flow<ResultState<List<RealtimeModelResponse>>>
 
+    fun getItem(key: String): Flow<ResultState<RealtimeModelResponse>>
+
     fun delete(
         key: String
     ): Flow<ResultState<String>>

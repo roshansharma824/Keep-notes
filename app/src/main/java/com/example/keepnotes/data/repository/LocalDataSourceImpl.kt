@@ -10,6 +10,7 @@ import com.example.keepnotes.domain.repository.LocalDataSource
 import com.example.keepnotes.utils.Constants.NOTE
 import com.example.keepnotes.utils.Constants.NOTES
 import com.example.keepnotes.utils.Constants.TITLE
+import com.example.keepnotes.utils.Constants.USERID
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
@@ -67,6 +68,7 @@ class LocalDataSourceImpl(
                         key = it.key
                     )
                 }
+                Log.i("LocalDataSourceImpl", "getItems $items")
                 trySend(ResultState.Success(items))
             }
 
@@ -79,6 +81,26 @@ class LocalDataSourceImpl(
 
         awaitClose {
             realtimeDb.removeEventListener(valueEvent)
+            close()
+        }
+    }
+
+    override fun getItem(key: String): Flow<ResultState<RealtimeModelResponse>> = callbackFlow  {
+        trySend(ResultState.Loading)
+
+        realtimeDb.child(InMemoryCache.userData.userId!!).child(NOTES).child(key).get()
+            .addOnSuccessListener {
+                trySend(ResultState.Success(RealtimeModelResponse(
+                    item = it.getValue(RealtimeModelResponse.RealtimeItems::class.java),
+                    key = it.key
+                )))
+                Log.i("LocalDataSourceImpl", "getItem ${it.value}")
+            }.addOnFailureListener{
+                trySend(ResultState.Failure(it))
+            }
+
+        awaitClose {
+
             close()
         }
     }
@@ -106,13 +128,15 @@ class LocalDataSourceImpl(
         val map = HashMap<String, Any>()
         map[TITLE] = res.item?.title!!
         map[NOTE] = res.item.note!!
+        map[USERID] = res.item.userId!!
 
-        realtimeDb.child(res.key!!).updateChildren(map)
+        realtimeDb.child(InMemoryCache.userData.userId!!).child(NOTES).child(res.key!!).updateChildren(map)
             .addOnFailureListener {
                 trySend(ResultState.Failure(it))
             }
             .addOnCompleteListener {
-                trySend(ResultState.Success("Update successfully..."))
+                if (it.isSuccessful)
+                    trySend(ResultState.Success("Update successfully..."))
             }
 
         awaitClose {

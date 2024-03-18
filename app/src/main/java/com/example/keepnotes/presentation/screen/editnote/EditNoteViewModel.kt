@@ -35,12 +35,12 @@ class EditNoteViewModel @Inject constructor(
 
 
 
-    fun getNote(id:Int) {
-        viewModelScope.launch(Dispatchers.IO) {
-            useCases.getNoteUseCase.invoke(id).collect { notes ->
-                _getNote.value = notes
-            }
-        }
+    fun getNote(key:String) {
+//        viewModelScope.launch(Dispatchers.IO) {
+//            useCases.getNoteUseCase.invoke(key).collect { notes ->
+//                _getNote.value = notes
+//            }
+//        }
     }
 
 

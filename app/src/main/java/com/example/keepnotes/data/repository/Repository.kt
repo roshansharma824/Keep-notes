@@ -22,6 +22,7 @@ class Repository @Inject constructor(
     fun insert(item: RealtimeModelResponse.RealtimeItems) = localDataSource.insert(item)
 
     fun getItems() = localDataSource.getItems()
+    fun getItem(key: String) = localDataSource.getItem(key)
     fun delete(
         key: String
     ) = localDataSource.delete(key = key)

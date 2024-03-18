@@ -7,4 +7,5 @@ object Constants {
     const val NOTES = "notes"
     const val TITLE = "title"
     const val NOTE = "note"
+    const val USERID = "userId"
 }

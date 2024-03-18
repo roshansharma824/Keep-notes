@@ -5,3 +5,9 @@ data class ItemState(
     val error: String = "",
     val isLoading: Boolean = false
 )
+
+data class NoteState(
+    val item: RealtimeModelResponse = RealtimeModelResponse(null),
+    val error: String = "",
+    val isLoading: Boolean = false
+)

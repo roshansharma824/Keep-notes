@@ -1,6 +1,7 @@
 package com.example.keepnotes.presentation.screen.editnote
 
 
+import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -20,6 +21,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -45,7 +47,7 @@ import com.example.keepnotes.utils.canGoBack
 @Composable
 fun EditNoteScreen(
     navController: NavController,
-    noteId: String? = "-1",
+    noteId: String = "-1",
     editNoteViewModel: EditNoteViewModel = hiltViewModel(),
     realtimeViewModel: RealtimeViewModel = hiltViewModel()
 ) {
@@ -55,14 +57,21 @@ fun EditNoteScreen(
 
 
 
-    val note by editNoteViewModel.getNote.collectAsState()
+    val note = realtimeViewModel.note.collectAsState()
 
-    if (noteId.isNullOrEmpty()) {
-//        editNoteViewModel.getNote(noteId)
-
-        titleInput = note.title
-        noteInput = note.note
+    if (noteId != "-1") {
+        LaunchedEffect(Unit){
+            realtimeViewModel.getNote(noteId)
+        }
     }
+
+    note.value.item.item?.title?.let {
+        titleInput = it
+    }
+    note.value.item.item?.note?.let{
+         noteInput = it
+    }
+
 
     Scaffold(
         topBar = {
@@ -97,20 +106,20 @@ fun EditNoteScreen(
             // Editable text
             EditableTextField(text = titleInput, placeholderText = "Title") { newText ->
                 titleInput = newText
-                editNoteViewModel.updateTitle( newText)
+                realtimeViewModel.updateTitle( newText)
             }
             // Editable text
             EditableTextField(text = noteInput, placeholderText = "Note") { newText ->
                 noteInput = newText
-                editNoteViewModel.updateNote( newText)
+                realtimeViewModel.updateNote( newText)
             }
         }
     }
 
     DisposableEffect(Unit) {
         onDispose {
-            if (titleInput.isNotEmpty() && noteInput.isNotEmpty()) {
-                if (note.id == -1) {
+            if (titleInput.isNotEmpty() || noteInput.isNotEmpty()) {
+                if (noteId == "-1") {
 
                     val newNote =
                         Note(id = Math.random().toInt(), title = titleInput, note = noteInput)
@@ -123,7 +132,7 @@ fun EditNoteScreen(
                         )
                     )
                 } else {
-                    editNoteViewModel.updateNote()
+                    realtimeViewModel.update()
                 }
 
             }
