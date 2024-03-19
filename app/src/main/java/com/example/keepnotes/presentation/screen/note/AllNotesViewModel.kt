@@ -54,6 +54,8 @@ class AllNotesViewModel @Inject constructor(
 
 
     fun deleteNote(key:String) = viewModelScope.launch {
-        useCases.deleteNoteUseCase.invoke(key)
+        useCases.deleteNoteUseCase.invoke(key).collect{
+
+        }
     }
 }

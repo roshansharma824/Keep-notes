@@ -91,13 +91,13 @@ class LocalDataSourceImpl(
     override fun deleteNote(key: String): Flow<ResultState<String>> = callbackFlow {
         trySend(ResultState.Loading)
 
-        realtimeDb.child(key).removeValue()
+        realtimeDb.child(InMemoryCache.userData.userId!!).child(NOTES).child(key).removeValue()
             .addOnFailureListener {
                 trySend(ResultState.Failure(it))
             }
             .addOnCompleteListener {
                 if (it.isSuccessful)
-                    trySend(ResultState.Success(""))
+                    trySend(ResultState.Success("Delete successfully..."))
             }
 
         awaitClose {

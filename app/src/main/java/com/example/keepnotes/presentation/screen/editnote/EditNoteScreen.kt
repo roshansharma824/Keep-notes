@@ -2,6 +2,7 @@ package com.example.keepnotes.presentation.screen.editnote
 
 
 import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -29,6 +30,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.onFocusChanged
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -37,11 +39,13 @@ import androidx.navigation.compose.rememberNavController
 import com.example.keepnotes.data.local.InMemoryCache
 import com.example.keepnotes.domain.model.Note
 import com.example.keepnotes.domain.model.RealtimeModelResponse
+import com.example.keepnotes.presentation.common.ProgressIndicator
 import com.example.keepnotes.presentation.screen.RealtimeViewModel
 import com.example.keepnotes.ui.theme.BackgroundColor
 import com.example.keepnotes.ui.theme.DIMENS_40dp
 import com.example.keepnotes.ui.theme.GrayTextColor
 import com.example.keepnotes.utils.canGoBack
+import com.example.keepnotes.utils.showToast
 
 
 @Composable
@@ -52,11 +56,10 @@ fun EditNoteScreen(
 ) {
     var titleInput by remember { mutableStateOf("") }
     var noteInput by remember { mutableStateOf("") }
-    val isDialog = remember { mutableStateOf(false) }
+    val context = LocalContext.current
 
 
-
-    val note = editNoteViewModel.note.collectAsState()
+    val note by editNoteViewModel.note.collectAsState()
 
     if (noteId != "-1") {
         LaunchedEffect(Unit){
@@ -64,10 +67,14 @@ fun EditNoteScreen(
         }
     }
 
-    note.value.item.item?.title?.let {
+    if (note.error.isNotEmpty()) {
+        context.showToast(note.error, Toast.LENGTH_LONG)
+    }
+
+    note.item.item?.title?.let {
         titleInput = it
     }
-    note.value.item.item?.note?.let{
+    note.item.item?.note?.let{
          noteInput = it
     }
 
@@ -94,23 +101,26 @@ fun EditNoteScreen(
         },
     ) {
 
+        if (note.isLoading){
+            ProgressIndicator()
+        }else {
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(it)
+            ) {
 
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(it)
-        ) {
 
-
-            // Editable text
-            EditableTextField(text = titleInput, placeholderText = "Title") { newText ->
-                titleInput = newText
-                editNoteViewModel.updateTitle( newText)
-            }
-            // Editable text
-            EditableTextField(text = noteInput, placeholderText = "Note") { newText ->
-                noteInput = newText
-                editNoteViewModel.updateNote( newText)
+                // Editable text
+                EditableTextField(text = titleInput, placeholderText = "Title") { newText ->
+                    titleInput = newText
+                    editNoteViewModel.updateTitle(newText)
+                }
+                // Editable text
+                EditableTextField(text = noteInput, placeholderText = "Note") { newText ->
+                    noteInput = newText
+                    editNoteViewModel.updateNote(newText)
+                }
             }
         }
     }
