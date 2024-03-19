@@ -10,6 +10,5 @@ import kotlinx.coroutines.flow.Flow
 class GetAllNoteUseCase(
     private val repository: Repository
 ) {
-//    suspend operator fun invoke(): Flow<List<Note>> = repository.getAllNote()
-    suspend operator fun invoke(): Flow<ResultState<List<RealtimeModelResponse>>> = repository.getItems()
+    suspend operator fun invoke(): Flow<ResultState<List<RealtimeModelResponse>>> = repository.getAllNote()
 }

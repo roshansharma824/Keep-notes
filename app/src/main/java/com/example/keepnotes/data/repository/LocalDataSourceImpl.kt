@@ -24,24 +24,7 @@ class LocalDataSourceImpl(
     noteDatabase: NoteDatabase,
     private val realtimeDb: DatabaseReference
 ) : LocalDataSource {
-
-    private val noteDao = noteDatabase.noteDao()
-    override suspend fun insertNote(note: Note) {
-        noteDao.insertNote(note = note)
-    }
-
-    override suspend fun updateNote(note: Note) {
-        noteDao.updateNote(note)
-    }
-
-    override suspend fun deleteNote(note: Note) {
-        noteDao.deleteNote(note)
-    }
-
-    override fun getNote(id: Int) = noteDao.getNote(id)
-
-    override fun getAllNote() = noteDao.getAllNote()
-    override fun insert(item: RealtimeModelResponse.RealtimeItems): Flow<ResultState<String>> =
+    override fun insertNote(item: RealtimeModelResponse.RealtimeItems): Flow<ResultState<String>> =
         callbackFlow {
             trySend(ResultState.Loading)
 
@@ -57,7 +40,7 @@ class LocalDataSourceImpl(
             awaitClose { close() }
         }
 
-    override fun getItems(): Flow<ResultState<List<RealtimeModelResponse>>> = callbackFlow {
+    override fun getAllNote(): Flow<ResultState<List<RealtimeModelResponse>>> = callbackFlow {
         trySend(ResultState.Loading)
 
         val valueEvent = object : ValueEventListener {
@@ -85,7 +68,7 @@ class LocalDataSourceImpl(
         }
     }
 
-    override fun getItem(key: String): Flow<ResultState<RealtimeModelResponse>> = callbackFlow  {
+    override fun getNote(key: String): Flow<ResultState<RealtimeModelResponse>> = callbackFlow  {
         trySend(ResultState.Loading)
 
         realtimeDb.child(InMemoryCache.userData.userId!!).child(NOTES).child(key).get()
@@ -105,7 +88,7 @@ class LocalDataSourceImpl(
         }
     }
 
-    override fun delete(key: String): Flow<ResultState<String>> = callbackFlow {
+    override fun deleteNote(key: String): Flow<ResultState<String>> = callbackFlow {
         trySend(ResultState.Loading)
 
         realtimeDb.child(key).removeValue()
@@ -122,7 +105,7 @@ class LocalDataSourceImpl(
         }
     }
 
-    override fun update(res: RealtimeModelResponse): Flow<ResultState<String>> = callbackFlow {
+    override fun updateNote(res: RealtimeModelResponse): Flow<ResultState<String>> = callbackFlow {
         trySend(ResultState.Loading)
 
         val map = HashMap<String, Any>()

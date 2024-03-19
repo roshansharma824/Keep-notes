@@ -9,26 +9,16 @@ class Repository @Inject constructor(
     private val localDataSource: LocalDataSource
 ) {
 
-    suspend fun insertNote(note: Note) = localDataSource.insertNote(note)
-
-    suspend fun updateNote(note: Note) = localDataSource.updateNote(note)
-
-    suspend fun deleteNote(note: Note) = localDataSource.deleteNote(note)
-
-    fun getNote(id: Int) = localDataSource.getNote(id)
+    fun insertNote(item: RealtimeModelResponse.RealtimeItems) = localDataSource.insertNote(item)
 
     fun getAllNote() = localDataSource.getAllNote()
-
-    fun insert(item: RealtimeModelResponse.RealtimeItems) = localDataSource.insert(item)
-
-    fun getItems() = localDataSource.getItems()
-    fun getItem(key: String) = localDataSource.getItem(key)
-    fun delete(
+    fun getNote(key: String) = localDataSource.getNote(key)
+    fun deleteNote(
         key: String
-    ) = localDataSource.delete(key = key)
+    ) = localDataSource.deleteNote(key = key)
 
-    fun update(
+    fun updateNote(
         res: RealtimeModelResponse
-    ) = localDataSource.update(res)
+    ) = localDataSource.updateNote(res)
 
 }

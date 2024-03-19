@@ -7,7 +7,5 @@ import com.example.keepnotes.domain.model.RealtimeModelResponse
 class AddNoteUseCase(
     private val repository: Repository
 ) {
-    suspend operator fun invoke(note: Note) = repository.insertNote(note)
-
-    operator fun invoke(item: RealtimeModelResponse.RealtimeItems) = repository.insert(item = item)
+    operator fun invoke(item: RealtimeModelResponse.RealtimeItems) = repository.insertNote(item = item)
 }

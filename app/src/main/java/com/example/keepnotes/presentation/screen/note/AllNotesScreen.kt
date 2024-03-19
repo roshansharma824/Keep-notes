@@ -19,6 +19,7 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.TextStyle
@@ -40,13 +41,11 @@ import com.example.keepnotes.ui.theme.*
 fun AllNotesScreen(
     navController: NavController,
     allNotesViewModel: AllNotesViewModel = hiltViewModel(),
-    realtimeViewModel: RealtimeViewModel = hiltViewModel()
 ) {
 
-//    val allNotes by allNotesViewModel.allNotesList.collectAsState()
-    val res = realtimeViewModel.res.collectAsState()
+    val allNotes by allNotesViewModel.allNotesList.collectAsState()
 
-    if (res.value.isLoading){
+    if (allNotes.isLoading){
         ProgressIndicator()
     }else{
         LazyVerticalStaggeredGrid(
@@ -57,9 +56,9 @@ fun AllNotesScreen(
 
             verticalItemSpacing = DIMENS_8dp
         ) {
-            items(res.value.item, key = { it.key!! }) { item ->
+            items(allNotes.item, key = { it.key!! }) { item ->
                 Log.d("AllNotes","${item.key}")
-                NoteCard(item = item, navController = navController, realtimeViewModel)
+                NoteCard(item = item, navController = navController, allNotesViewModel)
             }
         }
     }
@@ -69,7 +68,7 @@ fun AllNotesScreen(
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun NoteCard(item: RealtimeModelResponse, navController: NavController, realtimeViewModel: RealtimeViewModel) {
+fun NoteCard(item: RealtimeModelResponse, navController: NavController, allNotesViewModel: AllNotesViewModel) {
 
 
     Card(
@@ -80,7 +79,7 @@ fun NoteCard(item: RealtimeModelResponse, navController: NavController, realtime
                 navController.navigate(Screen.EditNote.passNoteId(noteId = "${item.key}"))
             },
             onLongClick = {
-//                allNotesViewModel.deleteNote(item)
+                allNotesViewModel.deleteNote("${item.key}")
             },
         )
     ) {

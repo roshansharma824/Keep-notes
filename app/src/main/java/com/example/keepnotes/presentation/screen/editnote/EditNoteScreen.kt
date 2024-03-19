@@ -49,7 +49,6 @@ fun EditNoteScreen(
     navController: NavController,
     noteId: String = "-1",
     editNoteViewModel: EditNoteViewModel = hiltViewModel(),
-    realtimeViewModel: RealtimeViewModel = hiltViewModel()
 ) {
     var titleInput by remember { mutableStateOf("") }
     var noteInput by remember { mutableStateOf("") }
@@ -57,11 +56,11 @@ fun EditNoteScreen(
 
 
 
-    val note = realtimeViewModel.note.collectAsState()
+    val note = editNoteViewModel.note.collectAsState()
 
     if (noteId != "-1") {
         LaunchedEffect(Unit){
-            realtimeViewModel.getNote(noteId)
+            editNoteViewModel.getNote(noteId)
         }
     }
 
@@ -106,33 +105,22 @@ fun EditNoteScreen(
             // Editable text
             EditableTextField(text = titleInput, placeholderText = "Title") { newText ->
                 titleInput = newText
-                realtimeViewModel.updateTitle( newText)
+                editNoteViewModel.updateTitle( newText)
             }
             // Editable text
             EditableTextField(text = noteInput, placeholderText = "Note") { newText ->
                 noteInput = newText
-                realtimeViewModel.updateNote( newText)
+                editNoteViewModel.updateNote( newText)
             }
         }
     }
-
     DisposableEffect(Unit) {
         onDispose {
             if (titleInput.isNotEmpty() || noteInput.isNotEmpty()) {
                 if (noteId == "-1") {
-
-                    val newNote =
-                        Note(id = Math.random().toInt(), title = titleInput, note = noteInput)
-                    editNoteViewModel.addNote(newNote)
-                    realtimeViewModel.insert(
-                        RealtimeModelResponse.RealtimeItems(
-                            userId = InMemoryCache.userData.userId,
-                            title = titleInput,
-                            note = noteInput
-                        )
-                    )
+                    editNoteViewModel.addNote()
                 } else {
-                    realtimeViewModel.update()
+                    editNoteViewModel.updateNote()
                 }
 
             }

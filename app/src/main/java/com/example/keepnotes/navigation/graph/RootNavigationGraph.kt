@@ -19,7 +19,7 @@ import com.example.keepnotes.data.auth.GoogleAuthUiClient
 
 import com.example.keepnotes.navigation.screen.Screen
 import com.example.keepnotes.presentation.MainScreen
-import com.example.keepnotes.presentation.screen.loginscreen.FirebaseViewModel
+import com.example.keepnotes.presentation.screen.loginscreen.LoginViewModel
 import com.example.keepnotes.presentation.screen.loginscreen.LoginScreen
 import com.example.keepnotes.presentation.screen.loginscreen.SignInViewModel
 import com.example.keepnotes.presentation.screen.splash.SplashScreen
@@ -36,7 +36,7 @@ fun RootNavigationGraph(navHostController: NavHostController) {
         )
     }
     val scope = rememberCoroutineScope()
-    lateinit var firebaseViewModel : FirebaseViewModel
+    lateinit var loginViewModel : LoginViewModel
 
     NavHost(
         navController = navHostController,
@@ -53,7 +53,7 @@ fun RootNavigationGraph(navHostController: NavHostController) {
 
             LaunchedEffect(key1 = googleAuthUiClient.getSignedInUser()) {
                 if(googleAuthUiClient.getSignedInUser() != null) {
-                    firebaseViewModel = FirebaseViewModel(googleAuthUiClient.getSignedInUser()!!)
+                    loginViewModel = LoginViewModel(googleAuthUiClient.getSignedInUser()!!)
                     navHostController.navigate(Graph.MAIN)
                 }
             }
@@ -77,9 +77,9 @@ fun RootNavigationGraph(navHostController: NavHostController) {
                     Toast.makeText(
                         context.applicationContext,
                         "Sign in successful",
-                        Toast.LENGTH_LONG
+                        Toast.LENGTH_SHORT
                     ).show()
-                    firebaseViewModel = FirebaseViewModel(googleAuthUiClient.getSignedInUser()!!)
+                    loginViewModel = LoginViewModel(googleAuthUiClient.getSignedInUser()!!)
                     navHostController.navigate(Graph.MAIN)
                     viewModel.resetState()
                 }
