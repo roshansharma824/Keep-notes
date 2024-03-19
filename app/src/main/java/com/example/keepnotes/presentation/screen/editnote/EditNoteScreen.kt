@@ -1,7 +1,6 @@
 package com.example.keepnotes.presentation.screen.editnote
 
 
-import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
@@ -36,11 +35,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
-import com.example.keepnotes.data.local.InMemoryCache
-import com.example.keepnotes.domain.model.Note
-import com.example.keepnotes.domain.model.RealtimeModelResponse
 import com.example.keepnotes.presentation.common.ProgressIndicator
-import com.example.keepnotes.presentation.screen.RealtimeViewModel
 import com.example.keepnotes.ui.theme.BackgroundColor
 import com.example.keepnotes.ui.theme.DIMENS_40dp
 import com.example.keepnotes.ui.theme.GrayTextColor

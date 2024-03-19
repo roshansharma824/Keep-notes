@@ -93,7 +93,6 @@ fun LoginScreen(
                         size(Size.ORIGINAL)
                     }).build(), imageLoader = imageLoader
                 ),
-//                colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.primary, blendMode = BlendMode.Color),
                 contentDescription = null,
                 contentScale = ContentScale.Crop,
                 modifier = Modifier.fillMaxWidth(0.8f),
