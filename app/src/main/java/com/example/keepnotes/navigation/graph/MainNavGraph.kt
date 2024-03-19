@@ -56,10 +56,10 @@ fun NavGraphBuilder.detailsNavGraph(navHostController: NavHostController) {
         composable(
             route = Screen.EditNote.route,
             arguments = listOf(navArgument(NOTE_ARGUMENT_KEY) {
-                type = NavType.IntType
+                type = NavType.StringType
             })
         ) { backStackEntry ->
-            val noteId = backStackEntry.arguments?.getInt(NOTE_ARGUMENT_KEY)
+            val noteId = backStackEntry.arguments?.getString(NOTE_ARGUMENT_KEY, "-1")
             if (noteId != null) {
                 EditNoteScreen(navController = navHostController,noteId = noteId)
             }

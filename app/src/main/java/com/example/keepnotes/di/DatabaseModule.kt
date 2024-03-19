@@ -6,6 +6,7 @@ import com.example.keepnotes.data.local.NoteDatabase
 import com.example.keepnotes.data.repository.LocalDataSourceImpl
 import com.example.keepnotes.domain.repository.LocalDataSource
 import com.example.keepnotes.utils.Constants.NOTE_DATABASE
+import com.google.firebase.database.DatabaseReference
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -32,8 +33,9 @@ object DatabaseModule {
     @Provides
     @Singleton
     fun provideLocalDataSource(
-        database: NoteDatabase
+        database: NoteDatabase,
+        realtimeDb: DatabaseReference
     ): LocalDataSource {
-        return LocalDataSourceImpl(database)
+        return LocalDataSourceImpl(database, realtimeDb)
     }
 }

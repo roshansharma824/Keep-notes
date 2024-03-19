@@ -6,7 +6,11 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.keepnotes.data.local.InMemoryCache
 import com.example.keepnotes.domain.model.Note
+import com.example.keepnotes.domain.model.NoteState
+import com.example.keepnotes.domain.model.RealtimeModelResponse
+import com.example.keepnotes.domain.model.ResultState
 import com.example.keepnotes.domain.usecase.UseCases
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -20,35 +24,83 @@ class EditNoteViewModel @Inject constructor(
     private val useCases: UseCases
 ) : ViewModel() {
 
-    private val _getNote = MutableStateFlow<Note>(Note(-1,"",""))
-    val getNote = _getNote.asStateFlow()
-    private var note by mutableStateOf("")
-    private var title by mutableStateOf("")
+    private val _note = MutableStateFlow(NoteState())
+    val note = _note.asStateFlow()
+
+    private var noteInput by mutableStateOf("")
+    private var titleInput by mutableStateOf("")
+    private var noteId by mutableStateOf("")
+    private var userId by mutableStateOf("")
 
     fun updateNote(input: String) {
-        note = input
+        noteInput = input
     }
     fun updateTitle(input: String) {
-        title = input
+        titleInput = input
     }
 
 
 
-    fun getNote(id:Int) {
-        viewModelScope.launch(Dispatchers.IO) {
-            useCases.getNoteUseCase.invoke(id).collect { notes ->
-                _getNote.value = notes
+    fun getNote(key: String) = viewModelScope.launch {
+        useCases.getNoteUseCase.invoke(key).collect{
+            when (it) {
+                is ResultState.Failure -> {
+                    _note.value = NoteState(
+                        error = it.msg.toString()
+                    )
+                }
+
+                is ResultState.Loading -> {
+                    _note.value = NoteState(
+                        isLoading = true
+                    )
+                }
+
+                is ResultState.Success -> {
+                    _note.value = NoteState(
+                        item = it.data
+                    )
+                    it.data.item?.note?.let { data->
+                        noteInput = data
+                    }
+                    it.data.item?.title?.let { data->
+                        titleInput = data
+                    }
+                    it.data.item?.userId?.let { data->
+                        userId = data
+                    }
+                    it.data.key?.let { data->
+                        noteId = data
+                    }
+                }
             }
         }
     }
 
+    fun addNote() = viewModelScope.launch {
 
-    fun addNote(note: Note) = viewModelScope.launch {
-        useCases.addNoteUseCase.invoke(note)
+        val item = RealtimeModelResponse.RealtimeItems(
+            userId = InMemoryCache.userData.userId,
+            title = titleInput,
+            note = noteInput
+        )
+
+        useCases.addNoteUseCase.invoke(item).collect{
+
+        }
     }
 
     fun updateNote() = viewModelScope.launch {
-        val updateNote = Note(id = getNote.value.id, title = title.ifBlank { getNote.value.title }, note = note.ifBlank { getNote.value.note })
-        useCases.updateNoteUseCase.invoke(updateNote)
+
+        val item = RealtimeModelResponse(
+            item = RealtimeModelResponse.RealtimeItems(
+                userId = InMemoryCache.userData.userId,
+                title = titleInput,
+                note = noteInput
+            ),
+            key = noteId
+        )
+        useCases.updateNoteUseCase.invoke(item).collect{
+        }
     }
 }

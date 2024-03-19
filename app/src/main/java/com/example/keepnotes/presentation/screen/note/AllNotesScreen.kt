@@ -1,6 +1,7 @@
 package com.example.keepnotes.presentation.screen.note
 
 import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
@@ -16,13 +17,13 @@ import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.foundation.lazy.staggeredgrid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -31,39 +32,59 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
-import com.example.keepnotes.domain.model.Note
+import com.example.keepnotes.domain.model.ItemState
+import com.example.keepnotes.domain.model.RealtimeModelResponse
+import com.example.keepnotes.domain.model.ResultState
 import com.example.keepnotes.navigation.screen.Screen
+import com.example.keepnotes.presentation.common.ProgressIndicator
+import com.example.keepnotes.presentation.screen.RealtimeViewModel
 import com.example.keepnotes.ui.theme.*
+import com.example.keepnotes.utils.showToast
 
 
 @Composable
 fun AllNotesScreen(
     navController: NavController,
-    allNotesViewModel: AllNotesViewModel = hiltViewModel()
+    allNotesViewModel: AllNotesViewModel = hiltViewModel(),
 ) {
+
+    val context = LocalContext.current
 
     val allNotes by allNotesViewModel.allNotesList.collectAsState()
 
+    if (allNotes.isLoading) {
+        ProgressIndicator()
+    } else {
+        LazyVerticalStaggeredGrid(
+            columns = StaggeredGridCells.Fixed(2),
+            modifier = Modifier.fillMaxSize(),
+            contentPadding = PaddingValues(DIMENS_8dp),
+            horizontalArrangement = Arrangement.spacedBy(DIMENS_8dp),
 
-    LazyVerticalStaggeredGrid(
-        columns = StaggeredGridCells.Fixed(2),
-        modifier = Modifier.fillMaxSize(),
-        contentPadding = PaddingValues(DIMENS_8dp),
-        horizontalArrangement = Arrangement.spacedBy(DIMENS_8dp),
-
-        verticalItemSpacing = DIMENS_8dp
-    ) {
-        items(allNotes) { item ->
-            Log.d("AllNotes","${item.id}")
-            NoteCard(item = item, navController = navController, allNotesViewModel)
+            verticalItemSpacing = DIMENS_8dp
+        ) {
+            items(allNotes.item, key = { it.key!! }) { item ->
+                Log.d("AllNotes", "${item.key}")
+                NoteCard(item = item, navController = navController, allNotesViewModel)
+            }
         }
     }
+
+
+    if (allNotes.error.isNotEmpty()) {
+        context.showToast(allNotes.error,Toast.LENGTH_LONG)
+    }
+
+
 }
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun NoteCard(item: Note, navController: NavController, allNotesViewModel: AllNotesViewModel) {
-
+fun NoteCard(
+    item: RealtimeModelResponse,
+    navController: NavController,
+    allNotesViewModel: AllNotesViewModel
+) {
 
 
     Card(
@@ -71,10 +92,11 @@ fun NoteCard(item: Note, navController: NavController, allNotesViewModel: AllNot
         shape = RoundedCornerShape(size = DIMENS_8dp),
         modifier = Modifier.combinedClickable(
             onClick = {
-                navController.navigate(Screen.EditNote.passNoteId(noteId = item.id))
+                navController.navigate(Screen.EditNote.passNoteId(noteId = "${item.key}"))
             },
             onLongClick = {
-                allNotesViewModel.deleteNote(item)
+                Log.d("AllNotesScreen", "onLongClick called")
+                allNotesViewModel.deleteNote("${item.key}")
             },
         )
     ) {
@@ -94,7 +116,7 @@ fun NoteCard(item: Note, navController: NavController, allNotesViewModel: AllNot
                 )
         ) {
             Text(
-                text = item.title,
+                text = item.item?.title!!,
                 style = TextStyle(
                     fontSize = TEXT_SIZE_18sp,
                     lineHeight = 20.sp,
@@ -107,7 +129,7 @@ fun NoteCard(item: Note, navController: NavController, allNotesViewModel: AllNot
             )
 
             Text(
-                text = item.note,
+                text = item.item.note!!,
                 style = TextStyle(
                     fontSize = TEXT_SIZE_14sp,
                     lineHeight = 20.sp,

@@ -52,7 +52,7 @@ fun MainScreen(
                 ).size(DIMENS_64dp).border(shape = RoundedCornerShape(
                     DIMENS_16dp
                 ), width = DIMENS_8dp, color = BackgroundColor).clickable {
-                    navController.navigate(Screen.EditNote.passNoteId(noteId = -1))
+                    navController.navigate(Screen.EditNote.passNoteId(noteId = "-1"))
                 },
                 contentAlignment = Alignment.Center
             ) {
