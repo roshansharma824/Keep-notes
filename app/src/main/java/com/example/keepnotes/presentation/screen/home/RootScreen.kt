@@ -9,7 +9,7 @@ import com.example.keepnotes.presentation.component.DrawerAppComponent
 
 
 @Composable
-fun HomeScreen(
+fun RootScreen(
     modifier: Modifier = Modifier,
     navController: NavHostController,
 ) {
@@ -20,8 +20,8 @@ fun HomeScreen(
 
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
-fun HomeScreenPreview() {
-    HomeScreen(navController = rememberNavController())
+fun RootScreenPreview() {
+    RootScreen(navController = rememberNavController())
 }
 
 

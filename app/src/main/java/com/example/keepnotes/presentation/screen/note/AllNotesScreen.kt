@@ -32,12 +32,9 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
-import com.example.keepnotes.domain.model.ItemState
 import com.example.keepnotes.domain.model.RealtimeModelResponse
-import com.example.keepnotes.domain.model.ResultState
 import com.example.keepnotes.navigation.screen.Screen
 import com.example.keepnotes.presentation.common.ProgressIndicator
-import com.example.keepnotes.presentation.screen.RealtimeViewModel
 import com.example.keepnotes.ui.theme.*
 import com.example.keepnotes.utils.showToast
 

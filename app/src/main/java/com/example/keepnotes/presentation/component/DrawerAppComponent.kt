@@ -222,7 +222,7 @@ fun BodyContentComponent(
     currentScreen: DrawerAppScreen, openDrawer: () -> Unit, navController: NavController
 ) {
     when (currentScreen) {
-        DrawerAppScreen.Notes -> Screen1Component(
+        DrawerAppScreen.Notes -> HomeScreen(
             openDrawer,
             navController
         )
@@ -235,28 +235,28 @@ fun BodyContentComponent(
             openDrawer
         )
 
-        DrawerAppScreen.Archive -> Screen1Component(
+        DrawerAppScreen.Archive -> HomeScreen(
             openDrawer,
             navController
         )
 
-        DrawerAppScreen.Deleted -> Screen1Component(
+        DrawerAppScreen.Deleted -> HomeScreen(
             openDrawer,
             navController
         )
 
-        DrawerAppScreen.Settings -> Screen1Component(
+        DrawerAppScreen.Settings -> HomeScreen(
             openDrawer,
             navController
         )
 
-        DrawerAppScreen.HelpFeedback -> Screen1Component(
+        DrawerAppScreen.HelpFeedback -> HomeScreen(
             openDrawer,
             navController
         )
 
         else -> {
-            Screen1Component(
+            HomeScreen(
                 openDrawer,
                 navController
             )
@@ -265,7 +265,7 @@ fun BodyContentComponent(
 }
 
 @Composable
-fun Screen1Component(openDrawer: () -> Unit, navController: NavController) {
+fun HomeScreen(openDrawer: () -> Unit, navController: NavController) {
     Column(modifier = Modifier.fillMaxSize()) {
         // TopAppBar has slots for a title, navigation icon,
         // and actions. Also known as the action bar.
