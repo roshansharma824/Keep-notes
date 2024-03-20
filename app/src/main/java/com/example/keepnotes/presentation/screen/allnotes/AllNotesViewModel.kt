@@ -1,16 +1,14 @@
-package com.example.keepnotes.presentation.screen.note
+package com.example.keepnotes.presentation.screen.allnotes
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.keepnotes.domain.model.ItemState
-import com.example.keepnotes.domain.model.Note
 import com.example.keepnotes.domain.model.ResultState
 import com.example.keepnotes.domain.usecase.UseCases
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
