@@ -7,6 +7,7 @@ import androidx.compose.ui.unit.sp
 val DIMENS_0dp = 0.dp
 val DIMENS_1dp = 1.dp
 val DIMENS_2dp = 2.dp
+val DIMENS_3dp = 3.dp
 val DIMENS_4dp = 4.dp
 val DIMENS_6dp = 6.dp
 val DIMENS_8dp = 8.dp

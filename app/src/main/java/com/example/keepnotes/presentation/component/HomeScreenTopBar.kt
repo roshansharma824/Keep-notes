@@ -23,6 +23,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -47,10 +48,12 @@ import com.example.keepnotes.data.local.InMemoryCache
 import com.example.keepnotes.presentation.common.ProgressIndicator
 import com.example.keepnotes.presentation.screen.loginscreen.LoginViewModel
 import com.example.keepnotes.presentation.screen.loginscreen.SignInViewModel
+import com.example.keepnotes.ui.theme.BackgroundColor
 import com.example.keepnotes.ui.theme.DIMENS_16dp
 import com.example.keepnotes.ui.theme.DIMENS_8dp
 import com.example.keepnotes.ui.theme.TEXT_SIZE_18sp
 import com.example.keepnotes.ui.theme.TopBarBackgroundColor
+import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.google.android.gms.auth.api.identity.Identity
 import kotlinx.coroutines.launch
 
@@ -59,6 +62,10 @@ import kotlinx.coroutines.launch
 fun HomeScreenTopBar(
     onClickAction: () -> Unit,
 ) {
+    val systemUiController = rememberSystemUiController()
+    SideEffect {
+        systemUiController.setSystemBarsColor(BackgroundColor)
+    }
     val context = LocalContext.current
     val googleAuthUiClient by lazy {
         GoogleAuthUiClient(

@@ -33,7 +33,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.keepnotes.R
-import com.example.keepnotes.presentation.screen.note.AllNotesScreen
+import com.example.keepnotes.presentation.screen.allnotes.AllNotesScreen
 import com.example.keepnotes.ui.theme.BackgroundColor
 import com.example.keepnotes.ui.theme.DIMENS_16dp
 import com.example.keepnotes.ui.theme.DIMENS_20dp
@@ -46,41 +46,23 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun DrawerAppComponent(navController: NavController) {
-    // Reacting to state changes is the core behavior of Compose
-    // @remember helps to calculate the value passed to it only
-    // during the first composition. It then
-    // returns the same value for every subsequent composition.
-    // @mutableStateOf as an observable value where updates to
-    // this variable will redraw all
-    // the composable functions. "only the composable
-    // that depend on this will be redraw while the
-    // rest remain unchanged making it more efficient".
     val drawerState = rememberDrawerState(DrawerValue.Closed)
-    // State composable used to hold the
-    // value of the current active screen
+
     val currentScreen = remember { mutableStateOf(DrawerAppScreen.Notes) }
 
     val coroutineScope = rememberCoroutineScope()
 
     ModalDrawer(
         drawerShape = RoundedCornerShape(topEnd = DIMENS_20dp, bottomEnd = DIMENS_20dp),
-        // Drawer state indicates whether
-        // the drawer is open or closed.
+
         drawerState = drawerState, gesturesEnabled = drawerState.isOpen, drawerContent = {
-            //drawerContent accepts a composable to represent
-            // the view/layout that will be displayed
-            // when the drawer is open.
+
             DrawerContentComponent(
-                // We pass a state composable that represents the
-                // current screen that's selected
-                // and what action to take when the drawer is closed.
+
                 currentScreen = currentScreen,
                 closeDrawer = { coroutineScope.launch { drawerState.close() } })
         }, content = {
-            // bodyContent takes a composable to
-            // represent the view/layout to display on the
-            // screen. We select the appropriate screen
-            // based on the value stored in currentScreen.
+
             BodyContentComponent(currentScreen = currentScreen.value, openDrawer = {
                 coroutineScope.launch { drawerState.open() }
             }, navController = navController)
@@ -112,37 +94,20 @@ fun DrawerContentComponent(
         )
 
         for (index in DrawerAppScreen.values().indices) {
-            // Box with clickable modifier wraps the
-            // child composable and enables it to react to a
-            // click through the onClick callback similar
-            // to the onClick listener that we are
-            // accustomed to on Android.
-            // Here, we just update the currentScreen variable
-            // to hold the appropriate value based on
-            // the row that is clicked i.e if the first
-            // row is clicked, we set the value of
-            // currentScreen to DrawerAppScreen.Screen1,
-            // when second row is clicked we set it to
-            // DrawerAppScreen.Screen2 and so on and so forth.
+
             val screen = getScreenBasedOnIndex(index)
             Column(Modifier.clickable(onClick = {
                 currentScreen.value = screen
-                // We also close the drawer when an
-                // option from the drawer is selected.
+
                 closeDrawer()
             }), content = {
-                // bodyContent takes a composable to
-                // represent the view/layout to display on the
-                // screen.
+
                 Surface(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(horizontal = DIMENS_8dp)
                         .clip(shape = RoundedCornerShape(50)),
-                    // We set the color of the row based on whether
-                    // that row represents the current
-                    // screen that's selected. We only want to
-                    // highlight the row that's selected.
+
                     color = if (currentScreen.value == screen) {
                         MaterialTheme.colors.secondary
                     } else {
@@ -269,13 +234,13 @@ fun HomeScreen(openDrawer: () -> Unit, navController: NavController) {
     Column(modifier = Modifier.fillMaxSize()) {
         // TopAppBar has slots for a title, navigation icon,
         // and actions. Also known as the action bar.
-        HomeScreenTopBar(onClickAction = openDrawer)
-        Surface(color = BackgroundColor, modifier = Modifier.weight(1f)) {
+
+        Surface(color = BackgroundColor, ) {
             Column(modifier = Modifier.fillMaxSize(),
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally,
                 content = {
-                    AllNotesScreen(navController = navController)
+                    AllNotesScreen(navController = navController, openDrawer =  openDrawer)
                 })
         }
     }
