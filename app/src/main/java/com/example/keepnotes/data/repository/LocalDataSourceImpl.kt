@@ -51,7 +51,7 @@ class LocalDataSourceImpl(
                         key = it.key
                     )
                 }
-                Log.i("LocalDataSourceImpl", "getItems $items")
+                Log.i("LocalDataSourceImpl", "getAllNote $items")
                 trySend(ResultState.Success(items))
             }
 

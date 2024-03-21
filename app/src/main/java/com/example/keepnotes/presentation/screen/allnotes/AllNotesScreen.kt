@@ -17,6 +17,12 @@ import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.foundation.lazy.staggeredgrid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.Snackbar
+import androidx.compose.material.SnackbarData
+import androidx.compose.material.SnackbarDuration
+import androidx.compose.material.SnackbarHost
+import androidx.compose.material.SnackbarHostState
+import androidx.compose.material.SnackbarResult
 import androidx.compose.material3.Card
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -27,6 +33,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -45,6 +52,7 @@ import com.example.keepnotes.presentation.component.HomeScreenTopBar
 import com.example.keepnotes.presentation.component.SelectedTopBar
 import com.example.keepnotes.ui.theme.*
 import com.example.keepnotes.utils.showToast
+import kotlinx.coroutines.launch
 
 
 @Composable
@@ -84,8 +92,19 @@ fun AllNotesScreen(
     val allNotes by allNotesViewModel.allNotesList.collectAsState()
 
 
+    val scope = rememberCoroutineScope()
+    val snackbarHostState = remember { SnackbarHostState() }
 
     Scaffold(
+        snackbarHost = {
+            SnackbarHost(hostState = snackbarHostState, snackbar = { snackbarData: SnackbarData ->
+                Snackbar(
+                    snackbarData = snackbarData,
+                    actionColor = UndoTextColor,
+                    contentColor = TextColor
+                )
+            })
+        },
         topBar = {
             if (isInSelectionMode)
                 SelectedTopBar(
@@ -97,6 +116,24 @@ fun AllNotesScreen(
                     }, onDelete = {
                         allNotesViewModel.deleteNote(selectedItems[0])
                         resetSelectionMode.invoke()
+
+                        scope.launch {
+                            val result = snackbarHostState
+                                .showSnackbar(
+                                    message = "Note Deleted Successfully..",
+                                    actionLabel = "Undo",
+                                    duration = SnackbarDuration.Long
+                                )
+                            when (result) {
+                                SnackbarResult.ActionPerformed -> {
+                                    Log.d("SnackbarResult", "ActionPerformed")
+                                }
+
+                                SnackbarResult.Dismissed -> {
+                                    Log.d("SnackbarResult", "Dismissed")
+                                }
+                            }
+                        }
                     },
                     onMakeCopy = {
                         allNotesViewModel.makeCopyNote(selectedItems[0])
@@ -129,7 +166,6 @@ fun AllNotesScreen(
                     verticalItemSpacing = DIMENS_8dp
                 ) {
                     items(allNotes.item, key = { it.key!! }) { item ->
-                        Log.d("AllNotes", "${item.key}")
                         val isSelected = selectedItems.contains(item.key)
                         NoteCard(
                             item = item,
@@ -163,8 +199,6 @@ fun AllNotesScreen(
                     }
                 }
             }
-
-//            DropdownMenuOptions(expanded = expanded, onDismiss = {expanded = false})
 
 
             if (allNotes.error.isNotEmpty()) {
