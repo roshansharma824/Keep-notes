@@ -1,23 +1,19 @@
 package com.example.keepnotes.navigation.screen
 
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Call
-import androidx.compose.material.icons.filled.Edit
-import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.PlayArrow
-import androidx.compose.material.icons.outlined.Check
-import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.res.painterResource
+import com.example.keepnotes.R
 
-sealed class BottomNavItemScreen(val route: String, val icon: ImageVector, val title: String) {
+sealed class BottomNavItemScreen(val route: String, val icon: Int, val title: String) {
 
-    data object Home : BottomNavItemScreen("home_screen", Icons.Default.Home, "")
-    data object EditNote : BottomNavItemScreen("edit_note_screen", Icons.Default.Home, "")
+    data object Home : BottomNavItemScreen("home_screen", R.drawable.icon_checkbox, "")
+    data object EditNote : BottomNavItemScreen("edit_note_screen", R.drawable.icon_checkbox, "")
 
-    data object CheckListNote : BottomNavItemScreen("check_list_note_screen", Icons.Outlined.Check, "")
+    data object CheckListNote : BottomNavItemScreen("check_list_note_screen", R.drawable.icon_checkbox, "")
 
-    data object DrawNote : BottomNavItemScreen("draw_note_screen", Icons.Default.Edit, "")
+    data object DrawNote : BottomNavItemScreen("draw_note_screen", R.drawable.icon_brush, "")
 
-    data object VoiceNote : BottomNavItemScreen("voice_note_screen", Icons.Default.Call, "")
-    data object PictureNote : BottomNavItemScreen("picture_note_screen", Icons.Default.PlayArrow, "")
+    data object VoiceNote : BottomNavItemScreen("voice_note_screen", R.drawable.icon_mike, "")
+    data object PictureNote : BottomNavItemScreen("picture_note_screen", R.drawable.icon_gallery, "")
 
 }

@@ -11,10 +11,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.example.keepnotes.R
 import com.example.keepnotes.navigation.screen.BottomNavItemScreen
 import com.example.keepnotes.ui.theme.BottomBarBackgroundColor
 import com.example.keepnotes.ui.theme.BottomNavigationHeight
@@ -54,7 +56,7 @@ fun BottomBar(
                 }
             }) {
                 Icon(
-                    imageVector = item.icon,
+                    painter = painterResource(id = item.icon),
                     contentDescription = item.title,
                     modifier = Modifier.size(
                         DIMENS_24dp

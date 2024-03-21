@@ -50,6 +50,8 @@ import com.example.keepnotes.presentation.screen.loginscreen.LoginViewModel
 import com.example.keepnotes.presentation.screen.loginscreen.SignInViewModel
 import com.example.keepnotes.ui.theme.BackgroundColor
 import com.example.keepnotes.ui.theme.DIMENS_16dp
+import com.example.keepnotes.ui.theme.DIMENS_20dp
+import com.example.keepnotes.ui.theme.DIMENS_24dp
 import com.example.keepnotes.ui.theme.DIMENS_8dp
 import com.example.keepnotes.ui.theme.TEXT_SIZE_18sp
 import com.example.keepnotes.ui.theme.TopBarBackgroundColor
@@ -124,9 +126,12 @@ fun HomeScreenTopBar(
             actions = {
                 IconButton(onClick = { }) {
                     Icon(
-                        painter = painterResource(id = R.drawable.icon_grid),
+                        painter = painterResource(id = R.drawable.icon_horizontal_grid),
                         contentDescription = "Grid Icon",
-                        tint = Color.White
+                        tint = Color.White,
+                        modifier = Modifier.size(
+                            DIMENS_20dp
+                        )
                     )
                 }
                 AsyncImage(
