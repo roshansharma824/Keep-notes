@@ -6,25 +6,33 @@ import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.foundation.lazy.staggeredgrid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.Icon
 import androidx.compose.material.Snackbar
 import androidx.compose.material.SnackbarData
 import androidx.compose.material.SnackbarDuration
 import androidx.compose.material.SnackbarHost
 import androidx.compose.material.SnackbarHostState
 import androidx.compose.material.SnackbarResult
+import androidx.compose.material.Surface
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.Card
-import androidx.compose.material3.Scaffold
+import androidx.compose.material.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -37,6 +45,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -48,6 +57,7 @@ import androidx.navigation.NavController
 import com.example.keepnotes.domain.model.RealtimeModelResponse
 import com.example.keepnotes.navigation.screen.Screen
 import com.example.keepnotes.presentation.common.ProgressIndicator
+import com.example.keepnotes.presentation.component.BottomBar
 import com.example.keepnotes.presentation.component.HomeScreenTopBar
 import com.example.keepnotes.presentation.component.SelectedTopBar
 import com.example.keepnotes.ui.theme.*
@@ -146,8 +156,41 @@ fun AllNotesScreen(
                     onClickAction = { openDrawer.invoke() }
                 )
         },
-        containerColor = BackgroundColor
-    ) {
+        backgroundColor = BackgroundColor,
+        bottomBar = {
+            BottomBar(navController = navController)
+        },
+        floatingActionButton = {
+            Box(
+                modifier = Modifier
+                    .background(
+                        color = BottomBarBackgroundColor, shape = RoundedCornerShape(
+                            DIMENS_16dp
+                        )
+                    )
+                    .size(DIMENS_64dp)
+                    .border(
+                        shape = RoundedCornerShape(
+                            DIMENS_16dp
+                        ), width = DIMENS_8dp, color = BackgroundColor
+                    )
+                    .clickable {
+                        navController.navigate(Screen.EditNote.passNoteId(noteId = "-1"))
+                    },
+                contentAlignment = Alignment.Center
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Add,
+                    contentDescription = "New Note",
+                    modifier = Modifier.size(
+                        DIMENS_40dp
+                    )
+                )
+            }
+        },
+        isFloatingActionButtonDocked = true
+
+        ) {
 
 
         Column(

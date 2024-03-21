@@ -26,53 +26,44 @@ fun BottomBar(
     navController: NavController,
 ) {
     val navigationItems = listOf(
-        BottomNavItemScreen.Home,
-        BottomNavItemScreen.EditNote,
         BottomNavItemScreen.CheckListNote,
         BottomNavItemScreen.DrawNote,
         BottomNavItemScreen.VoiceNote,
-        BottomNavItemScreen.PictureNote
+        BottomNavItemScreen.PictureNote,
     )
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
-    val bottomBarDestination = navigationItems.any { it.route == currentRoute }
 
 
-    if (bottomBarDestination) {
-
-        Row(
-            modifier = Modifier
-                .background(color = BottomBarBackgroundColor, shape = RectangleShape)
-                .height(
-                    BottomNavigationHeight
-                )
-                .fillMaxWidth()
-        ) {
-            navigationItems.forEach { item ->
-                if (item.route != "home_screen") {
-                    IconButton(onClick = {
-                        navController.navigate(item.route) {
-                            navController.graph.startDestinationRoute?.let { screen_route ->
-                                popUpTo(screen_route) { saveState = true }
-                            }
-                            launchSingleTop = true
-                            restoreState = true
-                        }
-                    }) {
-                        Icon(
-                            imageVector = item.icon,
-                            contentDescription = item.title,
-                            modifier = Modifier.size(
-                                DIMENS_24dp
-                            )
-                        )
+    Row(
+        modifier = Modifier
+            .background(color = BottomBarBackgroundColor, shape = RectangleShape)
+            .height(
+                BottomNavigationHeight
+            )
+            .fillMaxWidth()
+    ) {
+        navigationItems.forEach { item ->
+            IconButton(onClick = {
+                navController.navigate(item.route) {
+                    navController.graph.startDestinationRoute?.let { screen_route ->
+                        popUpTo(screen_route) { saveState = true }
                     }
+                    launchSingleTop = true
+                    restoreState = true
                 }
-
-
+            }) {
+                Icon(
+                    imageVector = item.icon,
+                    contentDescription = item.title,
+                    modifier = Modifier.size(
+                        DIMENS_24dp
+                    )
+                )
             }
-        }
 
+
+        }
     }
 }
 
