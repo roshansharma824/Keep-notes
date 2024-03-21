@@ -20,7 +20,12 @@ import com.example.keepnotes.ui.theme.TEXT_SIZE_18sp
 
 
 @Composable
-fun DropdownMenuOptions(expanded: Boolean, onDismiss: () -> Unit, onDelete: () -> Unit) {
+fun DropdownMenuOptions(
+    expanded: Boolean,
+    onDismiss: () -> Unit,
+    onDelete: () -> Unit,
+    onMakeCopy: () ->Unit
+) {
 
     val context = LocalContext.current
 
@@ -45,6 +50,14 @@ fun DropdownMenuOptions(expanded: Boolean, onDismiss: () -> Unit, onDelete: () -
             }) {
                 Text(
                     "Delete",
+                    style = MaterialTheme.typography.body2.copy(fontSize = TEXT_SIZE_18sp)
+                )
+            }
+            DropdownMenuItem(onClick = {
+                onMakeCopy.invoke()
+            }) {
+                Text(
+                    "Make a copy",
                     style = MaterialTheme.typography.body2.copy(fontSize = TEXT_SIZE_18sp)
                 )
             }

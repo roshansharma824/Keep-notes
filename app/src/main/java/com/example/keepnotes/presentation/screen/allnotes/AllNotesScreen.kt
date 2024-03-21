@@ -8,21 +8,15 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.foundation.lazy.staggeredgrid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Divider
-import androidx.compose.material.DropdownMenu
-import androidx.compose.material.DropdownMenuItem
-import androidx.compose.material.MaterialTheme
 import androidx.compose.material3.Card
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -44,11 +38,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
 import com.example.keepnotes.domain.model.RealtimeModelResponse
 import com.example.keepnotes.navigation.screen.Screen
 import com.example.keepnotes.presentation.common.ProgressIndicator
-import com.example.keepnotes.presentation.component.DropdownMenuOptions
 import com.example.keepnotes.presentation.component.HomeScreenTopBar
 import com.example.keepnotes.presentation.component.SelectedTopBar
 import com.example.keepnotes.ui.theme.*
@@ -97,17 +89,24 @@ fun AllNotesScreen(
         topBar = {
             if (isInSelectionMode)
                 SelectedTopBar(
-                    onClickAction = resetSelectionMode, onClickMenu = {
+                    onClickAction = {
+                        resetSelectionMode.invoke()
+                    },
+                    onClickMenu = {
 
                     }, onDelete = {
                         allNotesViewModel.deleteNote(selectedItems[0])
+                        resetSelectionMode.invoke()
+                    },
+                    onMakeCopy = {
+                        allNotesViewModel.makeCopyNote(selectedItems[0])
                         resetSelectionMode.invoke()
                     },
                     selectItemCount = selectedItems.size
                 )
             else
                 HomeScreenTopBar(
-                    onClickAction = { openDrawer }
+                    onClickAction = { openDrawer.invoke() }
                 )
         },
         containerColor = BackgroundColor

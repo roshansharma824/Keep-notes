@@ -1,6 +1,6 @@
 package com.example.keepnotes.presentation.screen.allnotes
 
-import android.util.Log
+import androidx.compose.ui.util.fastFilter
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.keepnotes.domain.model.ItemState
@@ -55,5 +55,21 @@ class AllNotesViewModel @Inject constructor(
         useCases.deleteNoteUseCase.invoke(key).collect{
 
         }
+    }
+
+    fun makeCopyNote(key: String) = viewModelScope.launch {
+
+        allNotesList.value.item.forEach {
+            if (it.key == key){
+
+                it.item?.let { it1 ->
+                    useCases.addNoteUseCase.invoke(it1).collect{
+
+                    }
+                }
+            }
+        }
+
+
     }
 }

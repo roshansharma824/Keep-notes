@@ -53,6 +53,7 @@ fun SelectedTopBar(
     onClickAction: () -> Unit,
     onClickMenu: () -> Unit,
     onDelete:() ->Unit,
+    onMakeCopy: () -> Unit,
     selectItemCount: Int = 1
 ) {
     val systemUiController = rememberSystemUiController()
@@ -93,7 +94,12 @@ fun SelectedTopBar(
                     onDelete = {
                         expanded = false
                         onDelete.invoke()
-                    })
+                    },
+                    onMakeCopy = {
+                        expanded = false
+                        onMakeCopy.invoke()
+                    }
+                )
 
 
             },
