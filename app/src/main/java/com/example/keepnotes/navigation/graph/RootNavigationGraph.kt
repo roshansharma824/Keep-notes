@@ -18,7 +18,6 @@ import androidx.navigation.compose.composable
 import com.example.keepnotes.data.auth.GoogleAuthUiClient
 
 import com.example.keepnotes.navigation.screen.Screen
-import com.example.keepnotes.presentation.MainScreen
 import com.example.keepnotes.presentation.screen.loginscreen.LoginViewModel
 import com.example.keepnotes.presentation.screen.loginscreen.LoginScreen
 import com.example.keepnotes.presentation.screen.loginscreen.SignInViewModel
@@ -101,7 +100,7 @@ fun RootNavigationGraph(navHostController: NavHostController) {
         }
 
         composable(route = Graph.MAIN){
-            MainScreen()
+            MainNavGraph()
         }
     }
 }

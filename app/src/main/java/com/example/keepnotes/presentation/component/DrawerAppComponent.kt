@@ -31,6 +31,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.example.keepnotes.R
 import com.example.keepnotes.presentation.screen.allnotes.AllNotesScreen
@@ -58,7 +59,6 @@ fun DrawerAppComponent(navController: NavController) {
         drawerState = drawerState, gesturesEnabled = drawerState.isOpen, drawerContent = {
 
             DrawerContentComponent(
-
                 currentScreen = currentScreen,
                 closeDrawer = { coroutineScope.launch { drawerState.close() } })
         }, content = {
@@ -187,9 +187,9 @@ fun BodyContentComponent(
     currentScreen: DrawerAppScreen, openDrawer: () -> Unit, navController: NavController
 ) {
     when (currentScreen) {
-        DrawerAppScreen.Notes -> HomeScreen(
-            openDrawer,
-            navController
+        DrawerAppScreen.Notes -> AllNotesScreen(
+            navController = navController,
+            openDrawer = openDrawer
         )
 
         DrawerAppScreen.Reminders -> Screen2Component(
@@ -200,51 +200,35 @@ fun BodyContentComponent(
             openDrawer
         )
 
-        DrawerAppScreen.Archive -> HomeScreen(
-            openDrawer,
-            navController
+        DrawerAppScreen.Archive -> AllNotesScreen(
+            navController = navController,
+            openDrawer = openDrawer
         )
 
-        DrawerAppScreen.Deleted -> HomeScreen(
-            openDrawer,
-            navController
+        DrawerAppScreen.Deleted -> AllNotesScreen(
+            navController = navController,
+            openDrawer = openDrawer
         )
 
-        DrawerAppScreen.Settings -> HomeScreen(
-            openDrawer,
-            navController
+        DrawerAppScreen.Settings -> AllNotesScreen(
+            navController = navController,
+            openDrawer = openDrawer
         )
 
-        DrawerAppScreen.HelpFeedback -> HomeScreen(
-            openDrawer,
-            navController
+        DrawerAppScreen.HelpFeedback -> AllNotesScreen(
+            navController = navController,
+            openDrawer = openDrawer
         )
-
         else -> {
-            HomeScreen(
-                openDrawer,
-                navController
+            AllNotesScreen(
+                navController = navController,
+                openDrawer = openDrawer
             )
         }
     }
 }
 
-@Composable
-fun HomeScreen(openDrawer: () -> Unit, navController: NavController) {
-    Column(modifier = Modifier.fillMaxSize()) {
-        // TopAppBar has slots for a title, navigation icon,
-        // and actions. Also known as the action bar.
 
-        Surface(color = BackgroundColor, ) {
-            Column(modifier = Modifier.fillMaxSize(),
-                verticalArrangement = Arrangement.Center,
-                horizontalAlignment = Alignment.CenterHorizontally,
-                content = {
-                    AllNotesScreen(navController = navController, openDrawer =  openDrawer)
-                })
-        }
-    }
-}
 
 @Composable
 fun Screen2Component(openDrawer: () -> Unit) {

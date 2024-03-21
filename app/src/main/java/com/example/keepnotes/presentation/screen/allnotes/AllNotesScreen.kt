@@ -6,6 +6,8 @@ import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -14,17 +16,23 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.foundation.lazy.staggeredgrid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Divider
-import androidx.compose.material.DropdownMenu
-import androidx.compose.material.DropdownMenuItem
-import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Icon
+import androidx.compose.material.Snackbar
+import androidx.compose.material.SnackbarData
+import androidx.compose.material.SnackbarDuration
+import androidx.compose.material.SnackbarHost
+import androidx.compose.material.SnackbarHostState
+import androidx.compose.material.SnackbarResult
+import androidx.compose.material.Surface
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.Card
-import androidx.compose.material3.Scaffold
+import androidx.compose.material.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -33,9 +41,11 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -44,15 +54,15 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
 import com.example.keepnotes.domain.model.RealtimeModelResponse
 import com.example.keepnotes.navigation.screen.Screen
 import com.example.keepnotes.presentation.common.ProgressIndicator
-import com.example.keepnotes.presentation.component.DropdownMenuOptions
+import com.example.keepnotes.presentation.component.BottomBar
 import com.example.keepnotes.presentation.component.HomeScreenTopBar
 import com.example.keepnotes.presentation.component.SelectedTopBar
 import com.example.keepnotes.ui.theme.*
 import com.example.keepnotes.utils.showToast
+import kotlinx.coroutines.launch
 
 
 @Composable
@@ -92,26 +102,95 @@ fun AllNotesScreen(
     val allNotes by allNotesViewModel.allNotesList.collectAsState()
 
 
+    val scope = rememberCoroutineScope()
+    val snackbarHostState = remember { SnackbarHostState() }
 
     Scaffold(
+        snackbarHost = {
+            SnackbarHost(hostState = snackbarHostState, snackbar = { snackbarData: SnackbarData ->
+                Snackbar(
+                    snackbarData = snackbarData,
+                    actionColor = UndoTextColor,
+                    contentColor = TextColor
+                )
+            })
+        },
         topBar = {
             if (isInSelectionMode)
                 SelectedTopBar(
-                    onClickAction = resetSelectionMode, onClickMenu = {
+                    onClickAction = {
+                        resetSelectionMode.invoke()
+                    },
+                    onClickMenu = {
 
                     }, onDelete = {
                         allNotesViewModel.deleteNote(selectedItems[0])
+                        resetSelectionMode.invoke()
+
+                        scope.launch {
+                            val result = snackbarHostState
+                                .showSnackbar(
+                                    message = "Note Deleted Successfully..",
+                                    actionLabel = "Undo",
+                                    duration = SnackbarDuration.Long
+                                )
+                            when (result) {
+                                SnackbarResult.ActionPerformed -> {
+                                    Log.d("SnackbarResult", "ActionPerformed")
+                                }
+
+                                SnackbarResult.Dismissed -> {
+                                    Log.d("SnackbarResult", "Dismissed")
+                                }
+                            }
+                        }
+                    },
+                    onMakeCopy = {
+                        allNotesViewModel.makeCopyNote(selectedItems[0])
                         resetSelectionMode.invoke()
                     },
                     selectItemCount = selectedItems.size
                 )
             else
                 HomeScreenTopBar(
-                    onClickAction = { openDrawer }
+                    onClickAction = { openDrawer.invoke() }
                 )
         },
-        containerColor = BackgroundColor
-    ) {
+        backgroundColor = BackgroundColor,
+        bottomBar = {
+            BottomBar(navController = navController)
+        },
+        floatingActionButton = {
+            Box(
+                modifier = Modifier
+                    .background(
+                        color = BottomBarBackgroundColor, shape = RoundedCornerShape(
+                            DIMENS_16dp
+                        )
+                    )
+                    .size(DIMENS_64dp)
+                    .border(
+                        shape = RoundedCornerShape(
+                            DIMENS_16dp
+                        ), width = DIMENS_8dp, color = BackgroundColor
+                    )
+                    .clickable {
+                        navController.navigate(Screen.EditNote.passNoteId(noteId = "-1"))
+                    },
+                contentAlignment = Alignment.Center
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Add,
+                    contentDescription = "New Note",
+                    modifier = Modifier.size(
+                        DIMENS_40dp
+                    )
+                )
+            }
+        },
+        isFloatingActionButtonDocked = true
+
+        ) {
 
 
         Column(
@@ -130,7 +209,6 @@ fun AllNotesScreen(
                     verticalItemSpacing = DIMENS_8dp
                 ) {
                     items(allNotes.item, key = { it.key!! }) { item ->
-                        Log.d("AllNotes", "${item.key}")
                         val isSelected = selectedItems.contains(item.key)
                         NoteCard(
                             item = item,
@@ -164,8 +242,6 @@ fun AllNotesScreen(
                     }
                 }
             }
-
-//            DropdownMenuOptions(expanded = expanded, onDismiss = {expanded = false})
 
 
             if (allNotes.error.isNotEmpty()) {

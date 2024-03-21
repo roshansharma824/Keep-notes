@@ -6,6 +6,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import androidx.navigation.navigation
 import com.example.keepnotes.navigation.screen.BottomNavItemScreen
@@ -19,7 +20,7 @@ import com.example.keepnotes.presentation.screen.voicenote.VoiceNote
 import com.example.keepnotes.utils.Constants.NOTE_ARGUMENT_KEY
 
 @Composable
-fun MainNavGraph(navHostController: NavHostController) {
+fun MainNavGraph(navHostController: NavHostController = rememberNavController()) {
     NavHost(
         navController = navHostController,
         route = Graph.MAIN,

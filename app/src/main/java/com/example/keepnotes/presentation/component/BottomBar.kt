@@ -11,10 +11,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.example.keepnotes.R
 import com.example.keepnotes.navigation.screen.BottomNavItemScreen
 import com.example.keepnotes.ui.theme.BottomBarBackgroundColor
 import com.example.keepnotes.ui.theme.BottomNavigationHeight
@@ -26,53 +28,44 @@ fun BottomBar(
     navController: NavController,
 ) {
     val navigationItems = listOf(
-        BottomNavItemScreen.Home,
-        BottomNavItemScreen.EditNote,
         BottomNavItemScreen.CheckListNote,
         BottomNavItemScreen.DrawNote,
         BottomNavItemScreen.VoiceNote,
-        BottomNavItemScreen.PictureNote
+        BottomNavItemScreen.PictureNote,
     )
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
-    val bottomBarDestination = navigationItems.any { it.route == currentRoute }
 
 
-    if (bottomBarDestination) {
-
-        Row(
-            modifier = Modifier
-                .background(color = BottomBarBackgroundColor, shape = RectangleShape)
-                .height(
-                    BottomNavigationHeight
-                )
-                .fillMaxWidth()
-        ) {
-            navigationItems.forEach { item ->
-                if (item.route != "home_screen") {
-                    IconButton(onClick = {
-                        navController.navigate(item.route) {
-                            navController.graph.startDestinationRoute?.let { screen_route ->
-                                popUpTo(screen_route) { saveState = true }
-                            }
-                            launchSingleTop = true
-                            restoreState = true
-                        }
-                    }) {
-                        Icon(
-                            imageVector = item.icon,
-                            contentDescription = item.title,
-                            modifier = Modifier.size(
-                                DIMENS_24dp
-                            )
-                        )
+    Row(
+        modifier = Modifier
+            .background(color = BottomBarBackgroundColor, shape = RectangleShape)
+            .height(
+                BottomNavigationHeight
+            )
+            .fillMaxWidth()
+    ) {
+        navigationItems.forEach { item ->
+            IconButton(onClick = {
+                navController.navigate(item.route) {
+                    navController.graph.startDestinationRoute?.let { screen_route ->
+                        popUpTo(screen_route) { saveState = true }
                     }
+                    launchSingleTop = true
+                    restoreState = true
                 }
-
-
+            }) {
+                Icon(
+                    painter = painterResource(id = item.icon),
+                    contentDescription = item.title,
+                    modifier = Modifier.size(
+                        DIMENS_24dp
+                    )
+                )
             }
-        }
 
+
+        }
     }
 }
 
