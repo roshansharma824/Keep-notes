@@ -9,8 +9,19 @@
 
 ## Introduction
 <p>
-This project uses jetpack compose technology,  in short jetpack Compose is Android’s recommended modern toolkit for building native UI. It simplifies and accelerates UI development on Android. Quickly bring your app to life with less code, powerful tools, and intuitive Kotlin APIs.
 
+This project uses [Jetpack Compose](https://developer.android.com/jetpack/compose) technology, in short jetpack Compose is Android’s recommended modern toolkit for building native UI. It simplifies and accelerates UI development on Android. Quickly bring your app to life with less code, powerful tools, and intuitive Kotlin APIs.
+To try out this sample app, use the latest stable version of [Android Studio](https://developer.android.com/studio). You can clone this repository or import the project from Android Studio following the steps [here](https://developer.android.com/jetpack/compose/setup#sample).
+
+## Features
+<p>
+This sample contains three screens: a list of notes, a edit or new note, and a google login to change account. The navigation from the list of notes to the interests screen uses a navigation drawer. Delete note and create a copy of note
+   
+See how to:
+- Use `Rows` and `Columns` to arrange the contents of the UI
+- Add a top app bar that elevates as the user scrolls
+- Use Material's `Typography` and `ColorScheme` to style the text
+- Use tonal elevation to make the `Cards` stand out from the background
 <p>
 
 # Preview App
@@ -27,16 +38,13 @@ This project uses jetpack compose technology,  in short jetpack Compose is Andro
 ## Tech Stack
 - MVVM (Model View View Model)
 - Use Case (for interaction data)
-
-
-
-
+- Clean Architecture (data, domain, layer)
+- Clean Code
 - Firebase Realtime Database
 - Authenticate with Google 
 - Coil (An image loading library for Android backed by Kotlin Coroutines)
 - Material Design 3 (Android's modern toolkit for building native UI)
-- Clean Architecture (data, domain, layer)
-- Clean Code
+
 
 ## Dependencies
 - [Compose UI](https://developer.android.com/jetpack/androidx/releases/compose-ui)
