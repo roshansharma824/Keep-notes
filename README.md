@@ -1,16 +1,26 @@
 <h1 align="center">
-   E-Commerce App
+   Keep-notes
 </h1>
 <p align="center">
   <a href="http://developer.android.com/index.html"><img alt="Platform" src="https://img.shields.io/badge/platform-Android-green.svg"></a>
-  <a href="http://kotlinlang.org"><img alt="Kotlin" src="https://img.shields.io/badge/kotlin-1.6.10-blue.svg"></a>
-  <a href="https://developer.android.com/studio/releases/gradle-plugin"><img alt="Gradle" src="https://img.shields.io/badge/gradle-7.4.0-yellow.svg"></a>
-  <a href="https://github.com/https://github.com/roshansharma824/E-Commerce-App/><img alt="Star" src="https://img.shields.io/github/stars/HariAgus/GroceriesApp-Compose"></a>
+  <a href="http://kotlinlang.org"><img alt="Kotlin" src="https://img.shields.io/badge/kotlin-1.9.0-blue.svg"></a>
+  <a href="https://developer.android.com/studio/releases/gradle-plugin"><img alt="Gradle" src="https://img.shields.io/badge/gradle-8.0.0-yellow.svg"></a>
 </p>
 
 ## Introduction
 <p>
 This project uses jetpack compose technology,  in short jetpack Compose is Android’s recommended modern toolkit for building native UI. It simplifies and accelerates UI development on Android. Quickly bring your app to life with less code, powerful tools, and intuitive Kotlin APIs.
+
+<p>
+
+# Preview App
+| Login Screen  | Home Screen | Edit Note Screen | Navigation Drawer |
+| ------------- | ------------- | ------------- | ------------- |
+| <img src="assets/login_screen.jpg" height=500 width=250/>  | <img src="assets/home_screen.jpg" height=500 width=250/> | <img src="assets/edit_note_screen.jpg" height=500 width=250/> | <img src="assets/navigation_drawer.jpg" height=500 width=250/> |
+
+| New Note Screen | Full Video |
+| ------------- | ------------- | 
+| <img src="assets/new_note_screen.jpg" height=500 width=250/>  | <img src="assets/video.mp4" height=500 width=250/> |
 
 <p>
 
