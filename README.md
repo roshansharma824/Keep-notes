@@ -20,13 +20,17 @@ This project uses jetpack compose technology,  in short jetpack Compose is Andro
 
 | New Note Screen | Full Video |
 | ------------- | ------------- | 
-| <img src="assets/new_note_screen.jpg" height=500 width=250/>  | <img src="assets/video.mp4" height=500 width=250/> |
+| <img src="assets/new_note_screen.jpg" height=500 width=250/>  | <video src="https://github.com/roshansharma824/Keep-notes/assets/85518522/36f8fc0c-140a-40a3-aba6-955a9f23ffb0" height=500 width=250/> |
 
 <p>
 
 ## Tech Stack
 - MVVM (Model View View Model)
 - Use Case (for interaction data)
+
+
+
+
 - Firebase Realtime Database
 - Authenticate with Google 
 - Coil (An image loading library for Android backed by Kotlin Coroutines)
