@@ -64,7 +64,8 @@ import kotlinx.coroutines.launch
 @Composable
 fun HomeScreenTopBar(
     onClickAction: () -> Unit,
-    onSearch: ()-> Unit
+    onSearch: () -> Unit,
+    onChangeView: () ->Unit
 ) {
     val systemUiController = rememberSystemUiController()
     SideEffect {
@@ -82,6 +83,9 @@ fun HomeScreenTopBar(
     val viewModel = viewModel<SignInViewModel>()
     val state by viewModel.state.collectAsStateWithLifecycle()
     var isLoading by remember {
+        mutableStateOf(false)
+    }
+    var changeView by remember {
         mutableStateOf(false)
     }
 
@@ -126,9 +130,12 @@ fun HomeScreenTopBar(
             backgroundColor = Color.Transparent,
             contentColor = Color.Transparent,
             actions = {
-                IconButton(onClick = { }) {
+                IconButton(onClick = {
+                    onChangeView.invoke()
+                    changeView = !changeView
+                }) {
                     Icon(
-                        painter = painterResource(id = R.drawable.icon_horizontal_grid),
+                        painter = if (changeView) painterResource(id = R.drawable.icon_grid) else painterResource(id = R.drawable.icon_horizontal_grid),
                         contentDescription = "Grid Icon",
                         tint = Color.White,
                         modifier = Modifier.size(
@@ -191,7 +198,7 @@ fun HomeScreenTopBar(
             }
         )
     }
-    if (isLoading){
+    if (isLoading) {
         ProgressIndicator()
     }
 }

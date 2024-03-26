@@ -74,6 +74,7 @@ fun AllNotesScreen(
 
 
     val context = LocalContext.current
+
     var isInSelectionMode by remember {
         mutableStateOf(false)
     }
@@ -84,7 +85,6 @@ fun AllNotesScreen(
         isInSelectionMode = false
         selectedItems.clear()
     }
-
     BackHandler(
         enabled = isInSelectionMode,
     ) {
@@ -101,6 +101,9 @@ fun AllNotesScreen(
 
     val allNotes by allNotesViewModel.allNotesList.collectAsState()
 
+    var changeView by remember {
+        mutableStateOf(false)
+    }
 
     val scope = rememberCoroutineScope()
     val snackbarHostState = remember { SnackbarHostState() }
@@ -155,6 +158,9 @@ fun AllNotesScreen(
                     onClickAction = { openDrawer.invoke() },
                     onSearch = {
                         navController.navigate(Screen.Search.route)
+                    },
+                    onChangeView = {
+                        changeView = !changeView
                     }
                 )
         },
@@ -203,7 +209,7 @@ fun AllNotesScreen(
                 ProgressIndicator()
             } else {
                 LazyVerticalStaggeredGrid(
-                    columns = StaggeredGridCells.Fixed(2),
+                    columns = StaggeredGridCells.Fixed(if (changeView) 1 else 2),
                     modifier = Modifier.fillMaxSize(),
                     contentPadding = PaddingValues(DIMENS_8dp),
                     horizontalArrangement = Arrangement.spacedBy(DIMENS_8dp),
