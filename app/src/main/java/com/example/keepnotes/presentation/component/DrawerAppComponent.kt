@@ -233,7 +233,7 @@ fun BodyContentComponent(
 @Composable
 fun Screen2Component(openDrawer: () -> Unit) {
     Column(modifier = Modifier.fillMaxSize()) {
-        HomeScreenTopBar(onClickAction = openDrawer, onSearch = {})
+        HomeScreenTopBar(onClickAction = openDrawer, onSearch = {}, onChangeView = {})
         Surface(color = BackgroundColor, modifier = Modifier.weight(1f)) {
             Column(modifier = Modifier.fillMaxSize(),
                 verticalArrangement = Arrangement.Center,
@@ -248,7 +248,7 @@ fun Screen2Component(openDrawer: () -> Unit) {
 @Composable
 fun Screen3Component(openDrawer: () -> Unit) {
     Column(modifier = Modifier.fillMaxSize()) {
-        HomeScreenTopBar(onClickAction = openDrawer, onSearch = {})
+        HomeScreenTopBar(onClickAction = openDrawer, onSearch = {}, onChangeView = {})
         Surface(color = BackgroundColor, modifier = Modifier.weight(1f)) {
             Column(modifier = Modifier.fillMaxSize(),
                 verticalArrangement = Arrangement.Center,
