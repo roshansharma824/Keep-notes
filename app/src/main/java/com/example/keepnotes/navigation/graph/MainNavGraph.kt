@@ -16,6 +16,7 @@ import com.example.keepnotes.presentation.screen.drawnote.DrawNote
 import com.example.keepnotes.presentation.screen.editnote.EditNoteScreen
 import com.example.keepnotes.presentation.screen.home.RootScreen
 import com.example.keepnotes.presentation.screen.picturenote.PictureNote
+import com.example.keepnotes.presentation.screen.search.SearchNotesScreen
 import com.example.keepnotes.presentation.screen.voicenote.VoiceNote
 import com.example.keepnotes.utils.Constants.NOTE_ARGUMENT_KEY
 
@@ -29,9 +30,9 @@ fun MainNavGraph(navHostController: NavHostController = rememberNavController())
         composable(route = BottomNavItemScreen.Home.route) {
             RootScreen(navController = navHostController)
         }
-//        composable(route = BottomNavItemScreen.EditNote.route) {
-//            EditNoteScreen(navController = navHostController)
-//        }
+        composable(route = BottomNavItemScreen.Search.route) {
+            SearchNotesScreen(navController = navHostController)
+        }
         composable(route = BottomNavItemScreen.CheckListNote.route) {
             CheckListNote()
         }

@@ -126,7 +126,6 @@ fun AllNotesScreen(
                     }, onDelete = {
                         allNotesViewModel.deleteNote(selectedItems[0])
                         resetSelectionMode.invoke()
-
                         scope.launch {
                             val result = snackbarHostState
                                 .showSnackbar(
@@ -153,7 +152,10 @@ fun AllNotesScreen(
                 )
             else
                 HomeScreenTopBar(
-                    onClickAction = { openDrawer.invoke() }
+                    onClickAction = { openDrawer.invoke() },
+                    onSearch = {
+                        navController.navigate(Screen.Search.route)
+                    }
                 )
         },
         backgroundColor = BackgroundColor,
@@ -212,8 +214,6 @@ fun AllNotesScreen(
                         val isSelected = selectedItems.contains(item.key)
                         NoteCard(
                             item = item,
-                            navController = navController,
-                            allNotesViewModel = allNotesViewModel,
                             isSelected = isSelected,
                             onClick = {
                                 if (isInSelectionMode) {
@@ -259,8 +259,6 @@ fun AllNotesScreen(
 @Composable
 fun NoteCard(
     item: RealtimeModelResponse,
-    navController: NavController,
-    allNotesViewModel: AllNotesViewModel,
     onClick: () -> Unit,
     onLongClick: () -> Unit,
     isSelected: Boolean

@@ -49,6 +49,7 @@ import com.example.keepnotes.presentation.common.ProgressIndicator
 import com.example.keepnotes.presentation.screen.loginscreen.LoginViewModel
 import com.example.keepnotes.presentation.screen.loginscreen.SignInViewModel
 import com.example.keepnotes.ui.theme.BackgroundColor
+import com.example.keepnotes.ui.theme.DIMENS_0dp
 import com.example.keepnotes.ui.theme.DIMENS_16dp
 import com.example.keepnotes.ui.theme.DIMENS_20dp
 import com.example.keepnotes.ui.theme.DIMENS_24dp
@@ -63,6 +64,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun HomeScreenTopBar(
     onClickAction: () -> Unit,
+    onSearch: ()-> Unit
 ) {
     val systemUiController = rememberSystemUiController()
     SideEffect {
@@ -170,11 +172,14 @@ fun HomeScreenTopBar(
                 )
             },
             modifier = Modifier
+                .clickable {
+                    onSearch.invoke()
+                }
                 .background(
                     color = TopBarBackgroundColor,
                     shape = RoundedCornerShape(50)
                 )
-                .padding(horizontal = DIMENS_8dp),
+                .padding(horizontal = DIMENS_0dp),
             navigationIcon = {
                 IconButton(onClick = { onClickAction.invoke() }) {
                     Icon(
