@@ -25,13 +25,13 @@ See how to:
 <p>
 
 # Preview App
-| Login Screen  | Home Screen | Edit Note Screen | Navigation Drawer |
-| ------------- | ------------- | ------------- | ------------- |
-| <img src="assets/login_screen.jpg" height=500 width=250/>  | <img src="assets/home_screen.jpg" height=500 width=250/> | <img src="assets/edit_note_screen.jpg" height=500 width=250/> | <img src="assets/navigation_drawer.jpg" height=500 width=250/> |
+| Login Screen  | Home Screen | Edit Note Screen |
+| ------------- | ------------- | ------------- |
+| <img src="assets/login_screen.jpg" height=500 width=250/>  | <img src="assets/home_screen.jpg" height=500 width=250/> | <img src="assets/edit_note_screen.jpg" height=500 width=250/> | 
 
-| New Note Screen | Full Video |
-| ------------- | ------------- | 
-| <img src="assets/new_note_screen.jpg" height=500 width=250/>  | <video src="https://github.com/roshansharma824/Keep-notes/assets/85518522/36f8fc0c-140a-40a3-aba6-955a9f23ffb0" height=500 width=250/> |
+| Navigation Drawer | New Note Screen | Full Video |
+| ------------- | ------------- | ------------- | 
+| <img src="assets/navigation_drawer.jpg" height=500 width=250/> | <img src="assets/new_note_screen.jpg" height=500 width=250/>  | <video src="https://github.com/roshansharma824/Keep-notes/assets/85518522/36f8fc0c-140a-40a3-aba6-955a9f23ffb0" height=500 width=250/> |
 
 <p>
 
