@@ -100,9 +100,7 @@ fun EditNoteScreen(
             }
         },
         bottomBar = {
-            note.item.item?.updatedAt?.let {
-                EditNoteBottomBar(updatedAt = it)
-            }
+            EditNoteBottomBar(updatedAt = note.item.item?.updatedAt ?: System.currentTimeMillis())
         }
     ) {
 
