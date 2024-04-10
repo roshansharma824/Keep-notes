@@ -10,6 +10,7 @@ import com.example.keepnotes.domain.repository.LocalDataSource
 import com.example.keepnotes.utils.Constants.NOTE
 import com.example.keepnotes.utils.Constants.NOTES
 import com.example.keepnotes.utils.Constants.TITLE
+import com.example.keepnotes.utils.Constants.UPDATED_AT
 import com.example.keepnotes.utils.Constants.USERID
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -112,6 +113,7 @@ class LocalDataSourceImpl(
         map[TITLE] = res.item?.title!!
         map[NOTE] = res.item.note!!
         map[USERID] = res.item.userId!!
+        map[UPDATED_AT] = res.item.updatedAt!!
 
         realtimeDb.child(InMemoryCache.userData.userId!!).child(NOTES).child(res.key!!).updateChildren(map)
             .addOnFailureListener {

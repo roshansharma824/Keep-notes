@@ -29,6 +29,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
@@ -37,7 +38,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
@@ -51,8 +51,10 @@ import com.example.keepnotes.presentation.screen.loginscreen.SignInViewModel
 import com.example.keepnotes.ui.theme.BackgroundColor
 import com.example.keepnotes.ui.theme.DIMENS_0dp
 import com.example.keepnotes.ui.theme.DIMENS_16dp
+import com.example.keepnotes.ui.theme.DIMENS_1dp
 import com.example.keepnotes.ui.theme.DIMENS_20dp
-import com.example.keepnotes.ui.theme.DIMENS_24dp
+import com.example.keepnotes.ui.theme.DIMENS_34dp
+import com.example.keepnotes.ui.theme.DIMENS_50dp
 import com.example.keepnotes.ui.theme.DIMENS_8dp
 import com.example.keepnotes.ui.theme.TEXT_SIZE_18sp
 import com.example.keepnotes.ui.theme.TopBarBackgroundColor
@@ -148,9 +150,9 @@ fun HomeScreenTopBar(
                     contentDescription = "profile img",
                     contentScale = ContentScale.Fit,            // crop the image if it's not a square
                     modifier = Modifier
-                        .size(34.dp)
+                        .size(DIMENS_34dp)
                         .clip(CircleShape)                       // clip to the circle shape
-                        .border(1.dp, Color.Gray, CircleShape)
+                        .border(DIMENS_1dp, Color.Gray, CircleShape)
                         .clickable {
                             scope.launch {
                                 val signInIntentSender = googleAuthUiClient.signIn()
@@ -166,12 +168,11 @@ fun HomeScreenTopBar(
                         }   // add a border (optional)
                 )
             },
-            elevation = 0.dp,
+            elevation = DIMENS_1dp,
             title = {
                 Text(
                     text = "Search yours notes",
-
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier.fillMaxWidth().align(Alignment.TopStart),
                     textAlign = TextAlign.Start,
                     color = Color.White,
                     fontWeight = FontWeight.Light,
@@ -184,9 +185,9 @@ fun HomeScreenTopBar(
                 }
                 .background(
                     color = TopBarBackgroundColor,
-                    shape = RoundedCornerShape(50)
+                    shape = RoundedCornerShape(DIMENS_50dp)
                 )
-                .padding(horizontal = DIMENS_0dp),
+                .padding(horizontal = DIMENS_8dp),
             navigationIcon = {
                 IconButton(onClick = { onClickAction.invoke() }) {
                     Icon(
