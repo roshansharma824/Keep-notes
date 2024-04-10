@@ -7,6 +7,8 @@ data class RealtimeModelResponse(
     data class RealtimeItems(
         val userId: String? = "",
         val title: String? = "",
-        val note: String? = ""
+        val note: String? = "",
+        val createdAt: Long? = System.currentTimeMillis(),
+        var updatedAt: Long? = System.currentTimeMillis(),
     )
 }

@@ -8,4 +8,5 @@ object Constants {
     const val TITLE = "title"
     const val NOTE = "note"
     const val USERID = "userId"
+    const val UPDATED_AT = "updatedAt"
 }
