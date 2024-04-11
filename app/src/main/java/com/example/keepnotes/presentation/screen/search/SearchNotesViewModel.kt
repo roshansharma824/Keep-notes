@@ -65,7 +65,7 @@ class SearchNotesViewModel @Inject constructor(
                 _allNotesList.value.item
             }
             itemState.item.filter { realtimeModelResponse->// filter and return a list of countries based on the text the user typed
-                realtimeModelResponse.item?.title?.uppercase()?.contains(text.trim().uppercase()) ?: false
+                realtimeModelResponse.item?.title?.uppercase()?.contains(text.trim().uppercase()) == true ||  realtimeModelResponse.item?.note?.uppercase()?.contains(text.trim().uppercase()) == true
             }
         }.stateIn(//basically convert the Flow returned from combine operator to StateFlow
             scope = viewModelScope,
