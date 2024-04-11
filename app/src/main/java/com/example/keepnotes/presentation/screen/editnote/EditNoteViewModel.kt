@@ -21,7 +21,7 @@ class EditNoteViewModel @Inject constructor(
     private val useCases: UseCases
 ) : ViewModel() {
 
-    private val _note = MutableStateFlow(NoteState())
+    private val _note = MutableStateFlow<NoteState>(NoteState.START)
     val note = _note.asStateFlow()
 
     private var noteInput by mutableStateOf("")
@@ -42,20 +42,18 @@ class EditNoteViewModel @Inject constructor(
         useCases.getNoteUseCase.invoke(key).collect{
             when (it) {
                 is ResultState.Failure -> {
-                    _note.value = NoteState(
-                        error = it.msg.toString()
+                    _note.value = NoteState.FAILURE(
+                        message = it.msg.toString()
                     )
                 }
 
                 is ResultState.Loading -> {
-                    _note.value = NoteState(
-                        isLoading = true
-                    )
+                    _note.value = NoteState.LOADING
                 }
 
                 is ResultState.Success -> {
-                    _note.value = NoteState(
-                        item = it.data
+                    _note.value = NoteState.SUCCESS(
+                        items = it.data
                     )
                     it.data.item?.note?.let { data->
                         noteInput = data

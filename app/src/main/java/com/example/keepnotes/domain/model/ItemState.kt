@@ -1,13 +1,16 @@
 package com.example.keepnotes.domain.model
 
-data class ItemState(
-    var item: List<RealtimeModelResponse> = emptyList(),
-    val error: String = "",
-    val isLoading: Boolean = false
-)
+sealed class ListNoteState {
+    data object START : ListNoteState()
+    data object LOADING : ListNoteState()
+    data class SUCCESS(val items: List<RealtimeModelResponse>) : ListNoteState()
+    data class FAILURE(val message: String) : ListNoteState()
+}
 
-data class NoteState(
-    val item: RealtimeModelResponse = RealtimeModelResponse(null),
-    val error: String = "",
-    val isLoading: Boolean = false
-)
+sealed class NoteState {
+    data object START : NoteState()
+    data object LOADING : NoteState()
+    data class SUCCESS(val items: RealtimeModelResponse) : NoteState()
+    data class FAILURE(val message: String) : NoteState()
+}
+
