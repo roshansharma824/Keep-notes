@@ -39,6 +39,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.example.keepnotes.domain.model.NoteState
 import com.example.keepnotes.presentation.common.ProgressIndicator
 import com.example.keepnotes.presentation.component.EditNoteBottomBar
 import com.example.keepnotes.ui.theme.BackgroundColor
@@ -67,16 +68,7 @@ fun EditNoteScreen(
         }
     }
 
-    if (note.error.isNotEmpty()) {
-        context.showToast(note.error, Toast.LENGTH_LONG)
-    }
 
-    note.item.item?.title?.let {
-        titleInput = it
-    }
-    note.item.item?.note?.let{
-         noteInput = it
-    }
 
 
     Scaffold(
@@ -100,9 +92,15 @@ fun EditNoteScreen(
             }
         },
         bottomBar = {
-            EditNoteBottomBar(updatedAt = note.item.item?.updatedAt ?: System.currentTimeMillis())
+            when(note){
+                is NoteState.FAILURE -> EditNoteBottomBar(updatedAt = System.currentTimeMillis())
+                NoteState.LOADING -> EditNoteBottomBar(updatedAt = System.currentTimeMillis())
+                NoteState.START -> EditNoteBottomBar(updatedAt = System.currentTimeMillis())
+                is NoteState.SUCCESS -> EditNoteBottomBar(updatedAt = (note as NoteState.SUCCESS).items.item?.updatedAt ?: System.currentTimeMillis())
+            }
+
         }
-    ) {
+    ) { paddingValues ->
 
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -111,21 +109,41 @@ fun EditNoteScreen(
                 .statusBarsPadding()
                 .navigationBarsPadding()
                 .imePadding()
-                .padding(it)
+                .padding(paddingValues)
         ) {
 
-            if (note.isLoading){
-                ProgressIndicator()
-            }else {
-                // Editable text
-                EditableTextField(text = titleInput, placeholderText = "Title") { newText ->
-                    titleInput = newText
-                    editNoteViewModel.updateTitle(newText)
+            when(note){
+                is NoteState.FAILURE -> context.showToast((note as NoteState.FAILURE).message, Toast.LENGTH_LONG)
+                NoteState.LOADING -> ProgressIndicator()
+                NoteState.START -> {
+                    // Editable text
+                    EditableTextField(text = titleInput, placeholderText = "Title") { newText ->
+                        titleInput = newText
+                        editNoteViewModel.updateTitle(newText)
+                    }
+                    // Editable text
+                    EditableTextField(text = noteInput, placeholderText = "Note") { newText ->
+                        noteInput = newText
+                        editNoteViewModel.updateNote(newText)
+                    }
                 }
-                // Editable text
-                EditableTextField(text = noteInput, placeholderText = "Note") { newText ->
-                    noteInput = newText
-                    editNoteViewModel.updateNote(newText)
+                is NoteState.SUCCESS -> {
+                    (note as NoteState.SUCCESS).items.item?.title?.let {
+                        titleInput = it
+                    }
+                    (note as NoteState.SUCCESS).items.item?.note?.let{
+                        noteInput = it
+                    }
+                    // Editable text
+                    EditableTextField(text = titleInput, placeholderText = "Title") { newText ->
+                        titleInput = newText
+                        editNoteViewModel.updateTitle(newText)
+                    }
+                    // Editable text
+                    EditableTextField(text = noteInput, placeholderText = "Note") { newText ->
+                        noteInput = newText
+                        editNoteViewModel.updateNote(newText)
+                    }
                 }
             }
         }

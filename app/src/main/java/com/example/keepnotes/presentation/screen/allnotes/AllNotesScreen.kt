@@ -22,17 +22,16 @@ import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.foundation.lazy.staggeredgrid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Icon
+import androidx.compose.material.Scaffold
 import androidx.compose.material.Snackbar
 import androidx.compose.material.SnackbarData
 import androidx.compose.material.SnackbarDuration
 import androidx.compose.material.SnackbarHost
 import androidx.compose.material.SnackbarHostState
 import androidx.compose.material.SnackbarResult
-import androidx.compose.material.Surface
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.Card
-import androidx.compose.material.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -45,7 +44,6 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -54,13 +52,29 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import com.example.keepnotes.domain.model.ListNoteState
 import com.example.keepnotes.domain.model.RealtimeModelResponse
 import com.example.keepnotes.navigation.screen.Screen
 import com.example.keepnotes.presentation.common.ProgressIndicator
 import com.example.keepnotes.presentation.component.BottomBar
 import com.example.keepnotes.presentation.component.HomeScreenTopBar
 import com.example.keepnotes.presentation.component.SelectedTopBar
-import com.example.keepnotes.ui.theme.*
+import com.example.keepnotes.ui.theme.BackgroundColor
+import com.example.keepnotes.ui.theme.BottomBarBackgroundColor
+import com.example.keepnotes.ui.theme.CardBorder
+import com.example.keepnotes.ui.theme.DIMENS_12dp
+import com.example.keepnotes.ui.theme.DIMENS_16dp
+import com.example.keepnotes.ui.theme.DIMENS_1dp
+import com.example.keepnotes.ui.theme.DIMENS_3dp
+import com.example.keepnotes.ui.theme.DIMENS_40dp
+import com.example.keepnotes.ui.theme.DIMENS_64dp
+import com.example.keepnotes.ui.theme.DIMENS_8dp
+import com.example.keepnotes.ui.theme.GrayTextColor
+import com.example.keepnotes.ui.theme.SelectedCardBorder
+import com.example.keepnotes.ui.theme.TEXT_SIZE_14sp
+import com.example.keepnotes.ui.theme.TEXT_SIZE_18sp
+import com.example.keepnotes.ui.theme.TextColor
+import com.example.keepnotes.ui.theme.UndoTextColor
 import com.example.keepnotes.utils.showToast
 import kotlinx.coroutines.launch
 
@@ -198,60 +212,57 @@ fun AllNotesScreen(
         },
         isFloatingActionButtonDocked = true
 
-        ) {
+        ) { padding->
 
 
         Column(
-            modifier = Modifier.padding(it)
+            modifier = Modifier.padding(padding)
         ) {
+            when(allNotes){
+                is ListNoteState.FAILURE -> context.showToast((allNotes as ListNoteState.FAILURE).message, Toast.LENGTH_LONG)
+                ListNoteState.LOADING -> ProgressIndicator()
+                ListNoteState.START -> TODO()
+                is ListNoteState.SUCCESS -> {
+                    LazyVerticalStaggeredGrid(
+                        columns = StaggeredGridCells.Fixed(if (changeView) 1 else 2),
+                        modifier = Modifier.fillMaxSize(),
+                        contentPadding = PaddingValues(DIMENS_8dp),
+                        horizontalArrangement = Arrangement.spacedBy(DIMENS_8dp),
 
-            if (allNotes.isLoading) {
-                ProgressIndicator()
-            } else {
-                LazyVerticalStaggeredGrid(
-                    columns = StaggeredGridCells.Fixed(if (changeView) 1 else 2),
-                    modifier = Modifier.fillMaxSize(),
-                    contentPadding = PaddingValues(DIMENS_8dp),
-                    horizontalArrangement = Arrangement.spacedBy(DIMENS_8dp),
-
-                    verticalItemSpacing = DIMENS_8dp
-                ) {
-                    items(allNotes.item, key = { it.key!! }) { item ->
-                        val isSelected = selectedItems.contains(item.key)
-                        NoteCard(
-                            item = item,
-                            isSelected = isSelected,
-                            onClick = {
-                                if (isInSelectionMode) {
-                                    if (isSelected) {
-                                        selectedItems.remove(item.key)
+                        verticalItemSpacing = DIMENS_8dp
+                    ) {
+                        items((allNotes as ListNoteState.SUCCESS).items, key = { it.key!! }) { item ->
+                            val isSelected = selectedItems.contains(item.key)
+                            NoteCard(
+                                item = item,
+                                isSelected = isSelected,
+                                onClick = {
+                                    if (isInSelectionMode) {
+                                        if (isSelected) {
+                                            selectedItems.remove(item.key)
+                                        } else {
+                                            selectedItems.add(item.key!!)
+                                        }
                                     } else {
+                                        navController.navigate(Screen.EditNote.passNoteId(noteId = "${item.key}"))
+                                    }
+                                },
+                                onLongClick = {
+                                    if (isInSelectionMode) {
+                                        if (isSelected) {
+                                            selectedItems.remove(item.key)
+                                        } else {
+                                            selectedItems.add(item.key!!)
+                                        }
+                                    } else {
+                                        isInSelectionMode = true
                                         selectedItems.add(item.key!!)
                                     }
-                                } else {
-                                    navController.navigate(Screen.EditNote.passNoteId(noteId = "${item.key}"))
                                 }
-                            },
-                            onLongClick = {
-                                if (isInSelectionMode) {
-                                    if (isSelected) {
-                                        selectedItems.remove(item.key)
-                                    } else {
-                                        selectedItems.add(item.key!!)
-                                    }
-                                } else {
-                                    isInSelectionMode = true
-                                    selectedItems.add(item.key!!)
-                                }
-                            }
-                        )
+                            )
+                        }
                     }
                 }
-            }
-
-
-            if (allNotes.error.isNotEmpty()) {
-                context.showToast(allNotes.error, Toast.LENGTH_LONG)
             }
         }
 

@@ -50,20 +50,21 @@ fun SearchScreenTopBar(
             backgroundColor = Color.Transparent,
             contentColor = Color.Transparent,
             actions = {
-                IconButton(onClick = {
-                    searchInput = ""
-                    onClearQuery.invoke()
-                }) {
-                    Icon(
-                        imageVector = Icons.Filled.Close,
-                        contentDescription = "Close Icon",
-                        tint = Color.White,
-                        modifier = Modifier.size(
-                            DIMENS_20dp
+                if (searchInput.isNotEmpty()){
+                    IconButton(onClick = {
+                        searchInput = ""
+                        onClearQuery.invoke()
+                    }) {
+                        Icon(
+                            imageVector = Icons.Filled.Close,
+                            contentDescription = "Close Icon",
+                            tint = Color.White,
+                            modifier = Modifier.size(
+                                DIMENS_20dp
+                            )
                         )
-                    )
+                    }
                 }
-
             },
             elevation = 0.dp,
             title = {
@@ -118,8 +119,8 @@ fun SearchTextField(
             .onFocusChanged { isKeyboardVisible = true },
         colors = TextFieldDefaults.outlinedTextFieldColors(
             backgroundColor = TopBarBackgroundColor,
-            focusedBorderColor = BackgroundColor,
-            unfocusedBorderColor = BackgroundColor,
+            focusedBorderColor = TopBarBackgroundColor,
+            unfocusedBorderColor = TopBarBackgroundColor,
             focusedLabelColor = BackgroundColor,
             cursorColor = GrayTextColor,
         ),
