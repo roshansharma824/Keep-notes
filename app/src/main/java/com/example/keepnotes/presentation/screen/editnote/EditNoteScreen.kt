@@ -128,11 +128,13 @@ fun EditNoteScreen(
                     }
                 }
                 is NoteState.SUCCESS -> {
-                    (note as NoteState.SUCCESS).items.item?.title?.let {
-                        titleInput = it
-                    }
-                    (note as NoteState.SUCCESS).items.item?.note?.let{
-                        noteInput = it
+                    LaunchedEffect(Unit){
+                        (note as NoteState.SUCCESS).items.item?.title?.let {
+                            titleInput = it
+                        }
+                        (note as NoteState.SUCCESS).items.item?.note?.let{
+                            noteInput = it
+                        }
                     }
                     // Editable text
                     EditableTextField(text = titleInput, placeholderText = "Title") { newText ->
