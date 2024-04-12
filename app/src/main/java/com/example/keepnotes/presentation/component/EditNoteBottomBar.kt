@@ -7,7 +7,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.MoreVert
-import androidx.compose.material.icons.sharp.Add
+import androidx.compose.material.icons.outlined.TextFormat
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
@@ -33,7 +33,9 @@ import java.util.Date
 fun EditNoteBottomBar(
     modifier: Modifier = Modifier,
     updatedAt: Long,
-) {
+    isShowTextEditorPanel: () -> Unit,
+
+    ) {
 
     val sdf = SimpleDateFormat("MMM dd")
     val resultdate = Date(updatedAt)
@@ -56,12 +58,12 @@ fun EditNoteBottomBar(
             val (leftMenu,rightMenu, text) = createRefs()
 
             IconButton(
-                onClick = { /*TODO*/ },
+                onClick = { isShowTextEditorPanel.invoke() },
                 modifier = Modifier.constrainAs(leftMenu) {
                     start.linkTo(parent.start)
                 }) {
                 Icon(
-                    imageVector = Icons.Sharp.Add,
+                    imageVector = Icons.Outlined.TextFormat,
                     contentDescription = "MoreVert",
                     tint = Color.White
                 )
@@ -106,5 +108,8 @@ fun EditNoteBottomBar(
 @Preview
 @Composable
 fun EditNoteBottomBarPreview() {
-    EditNoteBottomBar(updatedAt = System.currentTimeMillis())
+    EditNoteBottomBar(
+        updatedAt = System.currentTimeMillis(),
+        isShowTextEditorPanel = {}
+    )
 }
