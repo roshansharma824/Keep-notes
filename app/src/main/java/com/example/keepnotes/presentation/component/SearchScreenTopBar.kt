@@ -63,14 +63,12 @@ fun SearchScreenTopBar(
                         )
                     )
                 }
-
             },
             elevation = 0.dp,
             title = {
                 SearchTextField(text = searchInput, placeholderText = "Search yours notes") { newText ->
                     searchInput = newText
                     onQueryChanged(searchInput)
-//                    editNoteViewModel.updateNote(newText)
                 }
             },
             modifier = Modifier
@@ -118,7 +116,7 @@ fun SearchTextField(
             .onFocusChanged { isKeyboardVisible = true },
         colors = TextFieldDefaults.outlinedTextFieldColors(
             backgroundColor = TopBarBackgroundColor,
-            focusedBorderColor = BackgroundColor,
+            focusedBorderColor = TopBarBackgroundColor,
             unfocusedBorderColor = BackgroundColor,
             focusedLabelColor = BackgroundColor,
             cursorColor = GrayTextColor,
