@@ -16,6 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import com.example.keepnotes.navigation.screen.Screen
 import com.example.keepnotes.presentation.component.SearchScreenTopBar
 import com.example.keepnotes.presentation.screen.allnotes.NoteCard
 import com.example.keepnotes.ui.theme.BackgroundColor
@@ -55,7 +56,6 @@ fun SearchNotesScreen(
                 modifier = Modifier.fillMaxSize(),
                 contentPadding = PaddingValues(DIMENS_8dp),
                 horizontalArrangement = Arrangement.spacedBy(DIMENS_8dp),
-
                 verticalItemSpacing = DIMENS_8dp
             ) {
                 items(allNotes, key = { it.key!! }) { item ->
@@ -64,7 +64,7 @@ fun SearchNotesScreen(
                         item = item,
                         isSelected = false,
                         onClick = {
-
+                            navController.navigate(Screen.EditNote.passNoteId(noteId = "${item.key}"))
                         },
                         onLongClick = {
 
