@@ -140,7 +140,10 @@ fun EditNoteScreen(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(top = 20.dp)
-                        .padding(horizontal = 20.dp)
+                        .padding(horizontal = 20.dp),
+                    onCloseEditor = {
+                        isShowTextEditorPanel = !isShowTextEditorPanel
+                    }
                 )
             }else{
                 EditNoteBottomBar(

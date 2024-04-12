@@ -32,6 +32,7 @@ fun SlackDemoPanel(
     state: RichTextState,
     openLinkDialog: MutableState<Boolean>,
     modifier: Modifier = Modifier,
+    onCloseEditor: ()-> Unit
 ) {
     LazyRow(
         verticalAlignment = Alignment.CenterVertically,
@@ -262,6 +263,16 @@ fun SlackDemoPanel(
                 },
                 isSelected = state.isCodeSpan,
                 icon = Icons.Outlined.Code,
+            )
+        }
+
+        item {
+            SlackDemoPanelButton(
+                onClick = {
+                    onCloseEditor.invoke()
+                },
+                isSelected = state.isCodeSpan,
+                icon = Icons.Outlined.Close,
             )
         }
     }
