@@ -20,6 +20,7 @@ import androidx.compose.material.TextFieldDefaults
 import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowLeft
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -33,21 +34,31 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.onFocusChanged
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Dialog
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.keepnotes.presentation.common.ProgressIndicator
 import com.example.keepnotes.presentation.component.EditNoteBottomBar
+import com.example.keepnotes.presentation.component.SlackDemoPanel
 import com.example.keepnotes.ui.theme.BackgroundColor
 import com.example.keepnotes.ui.theme.DIMENS_40dp
 import com.example.keepnotes.ui.theme.GrayTextColor
 import com.example.keepnotes.utils.canGoBack
 import com.example.keepnotes.utils.showToast
+import com.mohamedrejeb.richeditor.annotation.ExperimentalRichTextApi
+import com.mohamedrejeb.richeditor.model.rememberRichTextState
+import com.mohamedrejeb.richeditor.ui.material3.RichTextEditor
+import com.mohamedrejeb.richeditor.ui.material3.RichTextEditorDefaults
 
 
+@OptIn(ExperimentalRichTextApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun EditNoteScreen(
     navController: NavController,
@@ -56,13 +67,29 @@ fun EditNoteScreen(
 ) {
     var titleInput by remember { mutableStateOf("") }
     var noteInput by remember { mutableStateOf("") }
+    var isShowTextEditorPanel by remember { mutableStateOf(false) }
     val context = LocalContext.current
+
+    val richTextState = rememberRichTextState()
+
+
+    val openLinkDialog = remember { mutableStateOf(false) }
+
+    LaunchedEffect(Unit) {
+        richTextState.setConfig(
+            linkColor = Color(0xFF1d9bd1),
+            linkTextDecoration = TextDecoration.None,
+            codeColor = Color(0xFFd7882d),
+            codeBackgroundColor = Color.Transparent,
+            codeStrokeColor = Color(0xFF494b4d),
+        )
+    }
 
 
     val note by editNoteViewModel.note.collectAsState()
 
     if (noteId != "-1") {
-        LaunchedEffect(Unit){
+        LaunchedEffect(Unit) {
             editNoteViewModel.getNote(noteId)
         }
     }
@@ -71,12 +98,17 @@ fun EditNoteScreen(
         context.showToast(note.error, Toast.LENGTH_LONG)
     }
 
-    note.item.item?.title?.let {
-        titleInput = it
+
+    LaunchedEffect(note.item.key) {
+        note.item.item?.title?.let {
+            titleInput = it
+        }
+        note.item.item?.note?.let {
+            noteInput = it
+            richTextState.setHtml(it)
+        }
     }
-    note.item.item?.note?.let{
-         noteInput = it
-    }
+
 
 
     Scaffold(
@@ -100,7 +132,26 @@ fun EditNoteScreen(
             }
         },
         bottomBar = {
-            EditNoteBottomBar(updatedAt = note.item.item?.updatedAt ?: System.currentTimeMillis())
+            if (isShowTextEditorPanel){
+                SlackDemoPanel(
+                    state = richTextState,
+                    openLinkDialog = openLinkDialog,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 20.dp)
+                        .padding(horizontal = 20.dp),
+                    onCloseEditor = {
+                        isShowTextEditorPanel = !isShowTextEditorPanel
+                    }
+                )
+            }else{
+                EditNoteBottomBar(
+                    updatedAt = note.item.item?.updatedAt ?: System.currentTimeMillis(),
+                    isShowTextEditorPanel = {
+                        isShowTextEditorPanel = !isShowTextEditorPanel
+                    }
+                )
+            }
         }
     ) {
 
@@ -114,25 +165,55 @@ fun EditNoteScreen(
                 .padding(it)
         ) {
 
-            if (note.isLoading){
+            if (note.isLoading) {
                 ProgressIndicator()
-            }else {
+            } else {
                 // Editable text
                 EditableTextField(text = titleInput, placeholderText = "Title") { newText ->
                     titleInput = newText
-                    editNoteViewModel.updateTitle(newText)
                 }
-                // Editable text
-                EditableTextField(text = noteInput, placeholderText = "Note") { newText ->
-                    noteInput = newText
-                    editNoteViewModel.updateNote(newText)
-                }
+
+                RichTextEditor(
+                    state = richTextState,
+                    placeholder = {
+                        Text(
+                            text = "Note",
+                        )
+                    },
+                    textStyle = MaterialTheme.typography.titleMedium.copy(color = GrayTextColor),
+                    colors = RichTextEditorDefaults.richTextEditorColors(
+                        textColor = Color(0xFFCBCCCD),
+                        containerColor = Color.Transparent,
+                        focusedIndicatorColor = Color.Transparent,
+                        unfocusedIndicatorColor = Color.Transparent,
+                        placeholderColor = Color.White.copy(alpha = .6f),
+                    ),
+                    modifier = Modifier
+                        .fillMaxWidth()
+
+                )
+
             }
+
+            if (openLinkDialog.value)
+                Dialog(
+                    onDismissRequest = {
+                        openLinkDialog.value = false
+                    }
+                ) {
+                    SlackDemoLinkDialog(
+                        state = richTextState,
+                        openLinkDialog = openLinkDialog
+                    )
+                }
         }
     }
     DisposableEffect(Unit) {
         onDispose {
-            if (titleInput.isNotEmpty() || noteInput.isNotEmpty()) {
+
+            editNoteViewModel.updateNote(richTextState.toHtml())
+            editNoteViewModel.updateTitle(titleInput)
+            if (titleInput.isNotEmpty() || richTextState.annotatedString.text.isNotEmpty()) {
                 if (noteId == "-1") {
                     editNoteViewModel.addNote()
                 } else {

@@ -62,8 +62,8 @@ dependencies {
     implementation("androidx.compose.ui:ui")
     implementation("androidx.compose.ui:ui-graphics")
     implementation("androidx.compose.ui:ui-tooling-preview")
-    implementation("androidx.compose.material:material:1.5.4")
-    implementation("androidx.compose.material3:material3:1.1.2")
+    implementation("androidx.compose.material:material:1.6.5")
+    implementation("androidx.compose.material3:material3:1.2.1")
     implementation("androidx.compose.material3:material3-window-size-class:1.1.2")
     implementation("androidx.lifecycle:lifecycle-runtime-compose:2.7.0")
     implementation( "androidx.constraintlayout:constraintlayout-compose:1.0.1")
@@ -110,6 +110,9 @@ dependencies {
     implementation("io.coil-kt:coil-compose:2.6.0")
     implementation("io.coil-kt:coil-gif:2.6.0")
     implementation("com.squareup.okhttp3:okhttp:4.12.0")
+
+    implementation("com.mohamedrejeb.richeditor:richeditor-compose:1.0.0-rc04")
+    implementation ("androidx.compose.material:material-icons-extended-android:1.6.5")
 
 
 }

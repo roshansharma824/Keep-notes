@@ -9,7 +9,7 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.text.font.Font
 import com.example.keepnotes.R
 
-val EComFontFamily = FontFamily(
+val NoteFontFamily = FontFamily(
     Font(R.font.notes_black, FontWeight.Black),
     Font(R.font.notes_extrabold, FontWeight.ExtraBold),
     Font(R.font.notes_bold, FontWeight.Bold),
@@ -20,13 +20,13 @@ val EComFontFamily = FontFamily(
 
 val TypographyStyle = Typography(
     h1 = TextStyle(
-        fontFamily = EComFontFamily,
+        fontFamily = NoteFontFamily,
         fontWeight = FontWeight.Bold,
         color = Color.White,
         fontSize = 49.sp
     ),
     body1 = TextStyle(
-        fontFamily = EComFontFamily,
+        fontFamily = NoteFontFamily,
         fontWeight = FontWeight.Bold,
         color = Color.White,
         fontSize = 24.sp
