@@ -11,7 +11,17 @@ import androidx.compose.material.icons.automirrored.outlined.FormatAlignLeft
 import androidx.compose.material.icons.automirrored.outlined.FormatAlignRight
 import androidx.compose.material.icons.automirrored.outlined.FormatListBulleted
 import androidx.compose.material.icons.filled.Circle
-import androidx.compose.material.icons.outlined.*
+import androidx.compose.material.icons.outlined.Circle
+import androidx.compose.material.icons.outlined.Close
+import androidx.compose.material.icons.outlined.Code
+import androidx.compose.material.icons.outlined.FormatAlignCenter
+import androidx.compose.material.icons.outlined.FormatBold
+import androidx.compose.material.icons.outlined.FormatItalic
+import androidx.compose.material.icons.outlined.FormatListNumbered
+import androidx.compose.material.icons.outlined.FormatSize
+import androidx.compose.material.icons.outlined.FormatStrikethrough
+import androidx.compose.material.icons.outlined.FormatUnderlined
+import androidx.compose.material.icons.outlined.Link
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.ui.Alignment
@@ -28,7 +38,7 @@ import androidx.compose.ui.unit.sp
 import com.mohamedrejeb.richeditor.model.RichTextState
 
 @Composable
-fun SlackDemoPanel(
+fun KeepNotePanel(
     state: RichTextState,
     openLinkDialog: MutableState<Boolean>,
     modifier: Modifier = Modifier,
@@ -40,7 +50,7 @@ fun SlackDemoPanel(
         modifier = modifier
     ) {
         item {
-            SlackDemoPanelButton(
+            KeepNotePanelButton(
                 onClick = {
                     state.addParagraphStyle(
                         ParagraphStyle(
@@ -54,7 +64,7 @@ fun SlackDemoPanel(
         }
 
         item {
-            SlackDemoPanelButton(
+            KeepNotePanelButton(
                 onClick = {
                     state.addParagraphStyle(
                         ParagraphStyle(
@@ -68,7 +78,7 @@ fun SlackDemoPanel(
         }
 
         item {
-            SlackDemoPanelButton(
+            KeepNotePanelButton(
                 onClick = {
                     state.addParagraphStyle(
                         ParagraphStyle(
@@ -91,7 +101,7 @@ fun SlackDemoPanel(
         }
 
         item {
-            SlackDemoPanelButton(
+            KeepNotePanelButton(
                 onClick = {
                     state.toggleSpanStyle(
                         SpanStyle(
@@ -105,7 +115,7 @@ fun SlackDemoPanel(
         }
 
         item {
-            SlackDemoPanelButton(
+            KeepNotePanelButton(
                 onClick = {
                     state.toggleSpanStyle(
                         SpanStyle(
@@ -119,7 +129,7 @@ fun SlackDemoPanel(
         }
 
         item {
-            SlackDemoPanelButton(
+            KeepNotePanelButton(
                 onClick = {
                     state.toggleSpanStyle(
                         SpanStyle(
@@ -133,7 +143,7 @@ fun SlackDemoPanel(
         }
 
         item {
-            SlackDemoPanelButton(
+            KeepNotePanelButton(
                 onClick = {
                     state.toggleSpanStyle(
                         SpanStyle(
@@ -156,7 +166,7 @@ fun SlackDemoPanel(
         }
 
         item {
-            SlackDemoPanelButton(
+            KeepNotePanelButton(
                 onClick = {
                     openLinkDialog.value = true
                 },
@@ -175,7 +185,7 @@ fun SlackDemoPanel(
         }
 
         item {
-            SlackDemoPanelButton(
+            KeepNotePanelButton(
                 onClick = {
                     state.toggleSpanStyle(
                         SpanStyle(
@@ -189,7 +199,7 @@ fun SlackDemoPanel(
         }
 
         item {
-            SlackDemoPanelButton(
+            KeepNotePanelButton(
                 onClick = {
                     state.toggleSpanStyle(
                         SpanStyle(
@@ -204,7 +214,7 @@ fun SlackDemoPanel(
         }
 
         item {
-            SlackDemoPanelButton(
+            KeepNotePanelButton(
                 onClick = {
                     state.toggleSpanStyle(
                         SpanStyle(
@@ -228,7 +238,7 @@ fun SlackDemoPanel(
         }
 
         item {
-            SlackDemoPanelButton(
+            KeepNotePanelButton(
                 onClick = {
                     state.toggleUnorderedList()
                 },
@@ -238,7 +248,7 @@ fun SlackDemoPanel(
         }
 
         item {
-            SlackDemoPanelButton(
+            KeepNotePanelButton(
                 onClick = {
                     state.toggleOrderedList()
                 },
@@ -257,7 +267,7 @@ fun SlackDemoPanel(
         }
 
         item {
-            SlackDemoPanelButton(
+            KeepNotePanelButton(
                 onClick = {
                     state.toggleCodeSpan()
                 },
@@ -267,7 +277,7 @@ fun SlackDemoPanel(
         }
 
         item {
-            SlackDemoPanelButton(
+            KeepNotePanelButton(
                 onClick = {
                     onCloseEditor.invoke()
                 },

@@ -46,7 +46,8 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.keepnotes.presentation.common.ProgressIndicator
 import com.example.keepnotes.presentation.component.EditNoteBottomBar
-import com.example.keepnotes.presentation.component.SlackDemoPanel
+import com.example.keepnotes.presentation.component.KeepNotePanel
+import com.example.keepnotes.presentation.component.KeepNoteLinkDialog
 import com.example.keepnotes.ui.theme.BackgroundColor
 import com.example.keepnotes.ui.theme.DIMENS_40dp
 import com.example.keepnotes.ui.theme.GrayTextColor
@@ -133,7 +134,7 @@ fun EditNoteScreen(
         },
         bottomBar = {
             if (isShowTextEditorPanel){
-                SlackDemoPanel(
+                KeepNotePanel(
                     state = richTextState,
                     openLinkDialog = openLinkDialog,
                     modifier = Modifier
@@ -201,7 +202,7 @@ fun EditNoteScreen(
                         openLinkDialog.value = false
                     }
                 ) {
-                    SlackDemoLinkDialog(
+                    KeepNoteLinkDialog(
                         state = richTextState,
                         openLinkDialog = openLinkDialog
                     )
