@@ -22,17 +22,17 @@ import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.foundation.lazy.staggeredgrid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Icon
+import androidx.compose.material.Scaffold
 import androidx.compose.material.Snackbar
 import androidx.compose.material.SnackbarData
 import androidx.compose.material.SnackbarDuration
 import androidx.compose.material.SnackbarHost
 import androidx.compose.material.SnackbarHostState
 import androidx.compose.material.SnackbarResult
-import androidx.compose.material.Surface
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.Card
-import androidx.compose.material.Scaffold
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -45,7 +45,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -60,8 +60,24 @@ import com.example.keepnotes.presentation.common.ProgressIndicator
 import com.example.keepnotes.presentation.component.BottomBar
 import com.example.keepnotes.presentation.component.HomeScreenTopBar
 import com.example.keepnotes.presentation.component.SelectedTopBar
-import com.example.keepnotes.ui.theme.*
+import com.example.keepnotes.ui.theme.BackgroundColor
+import com.example.keepnotes.ui.theme.BottomBarBackgroundColor
+import com.example.keepnotes.ui.theme.CardBorder
+import com.example.keepnotes.ui.theme.DIMENS_12dp
+import com.example.keepnotes.ui.theme.DIMENS_16dp
+import com.example.keepnotes.ui.theme.DIMENS_1dp
+import com.example.keepnotes.ui.theme.DIMENS_3dp
+import com.example.keepnotes.ui.theme.DIMENS_40dp
+import com.example.keepnotes.ui.theme.DIMENS_64dp
+import com.example.keepnotes.ui.theme.DIMENS_8dp
+import com.example.keepnotes.ui.theme.GrayTextColor
+import com.example.keepnotes.ui.theme.SelectedCardBorder
+import com.example.keepnotes.ui.theme.TEXT_SIZE_18sp
+import com.example.keepnotes.ui.theme.TextColor
+import com.example.keepnotes.ui.theme.UndoTextColor
 import com.example.keepnotes.utils.showToast
+import com.mohamedrejeb.richeditor.model.rememberRichTextState
+import com.mohamedrejeb.richeditor.ui.material3.RichText
 import kotlinx.coroutines.launch
 
 
@@ -71,6 +87,7 @@ fun AllNotesScreen(
     navController: NavController,
     allNotesViewModel: AllNotesViewModel = hiltViewModel(),
 ) {
+
 
 
     val context = LocalContext.current
@@ -213,7 +230,6 @@ fun AllNotesScreen(
                     modifier = Modifier.fillMaxSize(),
                     contentPadding = PaddingValues(DIMENS_8dp),
                     horizontalArrangement = Arrangement.spacedBy(DIMENS_8dp),
-
                     verticalItemSpacing = DIMENS_8dp
                 ) {
                     items(allNotes.item, key = { it.key!! }) { item ->
@@ -261,7 +277,7 @@ fun AllNotesScreen(
 
 }
 
-@OptIn(ExperimentalFoundationApi::class)
+@OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun NoteCard(
     item: RealtimeModelResponse,
@@ -269,6 +285,12 @@ fun NoteCard(
     onLongClick: () -> Unit,
     isSelected: Boolean
 ) {
+
+    val richTextState = rememberRichTextState()
+
+    item.item?.note?.let {
+        richTextState.setHtml(it)
+    }
 
 
     Card(
@@ -313,17 +335,24 @@ fun NoteCard(
                 textAlign = TextAlign.Left
             )
 
-            Text(
-                text = item.item.note!!,
-                style = TextStyle(
-                    fontSize = TEXT_SIZE_14sp,
-                    lineHeight = 20.sp,
+//            Text(
+//                text = item.item.note!!,
+//                style = TextStyle(
+//                    fontSize = TEXT_SIZE_14sp,
+//                    lineHeight = 20.sp,
+//
+//                    fontWeight = FontWeight(400),
+//                    color = GrayTextColor,
+//                    textAlign = TextAlign.Left
+//
+//                )
+//            )
 
-                    fontWeight = FontWeight(400),
-                    color = GrayTextColor,
-                    textAlign = TextAlign.Left
-
-                )
+            RichText(
+                state = richTextState,
+                color = Color.White,
+                modifier = Modifier
+                    .fillMaxWidth()
             )
         }
     }

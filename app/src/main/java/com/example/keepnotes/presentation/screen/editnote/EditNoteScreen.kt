@@ -54,7 +54,6 @@ import com.example.keepnotes.utils.canGoBack
 import com.example.keepnotes.utils.showToast
 import com.mohamedrejeb.richeditor.annotation.ExperimentalRichTextApi
 import com.mohamedrejeb.richeditor.model.rememberRichTextState
-import com.example.keepnotes.presentation.component.SlackDemoLinkDialog
 import com.mohamedrejeb.richeditor.ui.material3.RichTextEditor
 import com.mohamedrejeb.richeditor.ui.material3.RichTextEditorDefaults
 
@@ -106,7 +105,7 @@ fun EditNoteScreen(
         }
         note.item.item?.note?.let {
             noteInput = it
-            richTextState.setText(it)
+            richTextState.setHtml(it)
         }
     }
 
@@ -212,7 +211,7 @@ fun EditNoteScreen(
     DisposableEffect(Unit) {
         onDispose {
 
-            editNoteViewModel.updateNote(richTextState.annotatedString.text)
+            editNoteViewModel.updateNote(richTextState.toHtml())
             editNoteViewModel.updateTitle(titleInput)
             if (titleInput.isNotEmpty() || richTextState.annotatedString.text.isNotEmpty()) {
                 if (noteId == "-1") {
