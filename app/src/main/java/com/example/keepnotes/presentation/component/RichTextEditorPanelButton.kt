@@ -20,7 +20,7 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun SlackDemoPanelButton(
+fun KeepNotePanelButton(
     onClick: () -> Unit,
     icon: ImageVector,
     tint: Color? = null,
