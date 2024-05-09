@@ -49,7 +49,6 @@ import com.example.keepnotes.presentation.common.ProgressIndicator
 import com.example.keepnotes.presentation.screen.loginscreen.LoginViewModel
 import com.example.keepnotes.presentation.screen.loginscreen.SignInViewModel
 import com.example.keepnotes.ui.theme.BackgroundColor
-import com.example.keepnotes.ui.theme.DIMENS_0dp
 import com.example.keepnotes.ui.theme.DIMENS_16dp
 import com.example.keepnotes.ui.theme.DIMENS_1dp
 import com.example.keepnotes.ui.theme.DIMENS_20dp
@@ -99,7 +98,7 @@ fun HomeScreenTopBar(
                 "Sign in successful",
                 Toast.LENGTH_SHORT
             ).show()
-            loginViewModel = LoginViewModel(googleAuthUiClient.getSignedInUser()!!)
+//            loginViewModel = LoginViewModel(googleAuthUiClient.getSignedInUser()!!)
             val refresh = Intent(context, MainActivity::class.java)
             context.startActivity(refresh)
             viewModel.resetState()
@@ -113,10 +112,10 @@ fun HomeScreenTopBar(
             if (result.resultCode == Activity.RESULT_OK) {
                 scope.launch {
                     isLoading = true
-                    val signInResult = googleAuthUiClient.signInWithIntent(
-                        intent = result.data ?: return@launch
-                    )
-                    viewModel.onSignInResult(signInResult)
+//                    val signInResult = googleAuthUiClient.signInWithIntent(
+//                        intent = result.data ?: return@launch
+//                    )
+//                    viewModel.onSignInResult(signInResult)
                 }
             }
             isLoading = false
@@ -146,7 +145,7 @@ fun HomeScreenTopBar(
                     )
                 }
                 AsyncImage(
-                    model = "${InMemoryCache.userData.profilePictureUrl}",
+                    model = "${InMemoryCache.userData?.picture}",
                     contentDescription = "profile img",
                     contentScale = ContentScale.Fit,            // crop the image if it's not a square
                     modifier = Modifier

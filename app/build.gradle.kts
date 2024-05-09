@@ -102,7 +102,7 @@ dependencies {
     // Firebase
     implementation(platform("com.google.firebase:firebase-bom:32.7.4"))
     implementation("com.google.firebase:firebase-analytics")
-    implementation("com.google.android.gms:play-services-auth:21.0.0")
+//    implementation("com.google.android.gms:play-services-auth:21.0.0")
     implementation("com.google.firebase:firebase-auth:22.3.1")
     implementation("com.google.firebase:firebase-firestore:24.10.3")
     implementation("com.google.firebase:firebase-storage:20.3.0")
@@ -115,6 +115,23 @@ dependencies {
     implementation ("androidx.compose.material:material-icons-extended-android:1.6.5")
 
 
+    // Contains the core Credential Manager functionalities including password
+    // and passkey support.
+    implementation("androidx.credentials:credentials:1.3.0-alpha03")
+    // Provides support from Google Play services for Credential Manager,
+    // which lets you use the APIs on older devices.
+    implementation("androidx.credentials:credentials-play-services-auth:1.3.0-alpha03")
+    implementation("com.google.android.libraries.identity.googleid:googleid:1.1.0")
+
+    // Google Auth
+    implementation("com.google.android.gms:play-services-auth:21.1.1")
+
+    // JWT Decoder
+    implementation("com.auth0.android:jwtdecode:2.0.2")
+
+    // Gson needed for Proguard rules for JWT Decoder library (For now).
+    // Because JWT Decoder doesn't add those Proguard rules by default.
+    implementation("com.google.code.gson:gson:2.10.1")
 }
 
 // Allow references to generated code

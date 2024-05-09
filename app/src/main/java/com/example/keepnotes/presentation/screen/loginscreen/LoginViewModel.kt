@@ -5,6 +5,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.keepnotes.data.auth.GoogleUser
 import com.example.keepnotes.data.auth.UserData
 import com.example.keepnotes.data.local.InMemoryCache
 import com.example.keepnotes.utils.Constants.USERS
@@ -15,7 +16,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 
 class LoginViewModel(
-    val userData: UserData
+    val userData: GoogleUser
 ) : ViewModel() {
 
     var Bio by mutableStateOf("")
@@ -34,17 +35,17 @@ class LoginViewModel(
     }
 
 
-    private fun addUserToFirestore(user: UserData) {
+    private fun addUserToFirestore(user: GoogleUser) {
         viewModelScope.launch (Dispatchers.IO){
-            val userQuery = firebase.collection(USERS).document(user.userId.toString()).get().await()
+            val userQuery = firebase.collection(USERS).document(user.sub.toString()).get().await()
 
             if (!userQuery.exists()) {
-                firebase.collection(USERS).document(user.userId.toString())
+                firebase.collection(USERS).document(user.sub.toString())
                     .set(user)
                     .await()
             }else{
                 val currentUser = userQuery.toObject(UserData::class.java)
-                userData.bio = currentUser?.bio.toString()
+//                userData.familyName = currentUser?.bio.toString()
                 profilePicture = currentUser?.profilePictureUrl.toString()
                 Bio = currentUser?.bio.toString()
             }

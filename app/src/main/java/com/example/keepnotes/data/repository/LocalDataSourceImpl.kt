@@ -3,7 +3,6 @@ package com.example.keepnotes.data.repository
 import android.util.Log
 import com.example.keepnotes.data.local.InMemoryCache
 import com.example.keepnotes.data.local.NoteDatabase
-import com.example.keepnotes.domain.model.Note
 import com.example.keepnotes.domain.model.RealtimeModelResponse
 import com.example.keepnotes.domain.model.ResultState
 import com.example.keepnotes.domain.repository.LocalDataSource
@@ -16,7 +15,6 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.ValueEventListener
-import com.google.firebase.database.getValue
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
@@ -29,7 +27,7 @@ class LocalDataSourceImpl(
         callbackFlow {
             trySend(ResultState.Loading)
 
-            realtimeDb.child(InMemoryCache.userData.userId!!).child(NOTES).push().setValue(item)
+            realtimeDb.child(InMemoryCache.userData?.sub!!).child(NOTES).push().setValue(item)
                 .addOnFailureListener {
                     trySend(ResultState.Failure(it))
                 }
@@ -46,7 +44,7 @@ class LocalDataSourceImpl(
 
         val valueEvent = object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
-                val items = snapshot.child(InMemoryCache.userData.userId!!).child(NOTES).children.map {
+                val items = snapshot.child(InMemoryCache.userData?.sub!!).child(NOTES).children.map {
                     RealtimeModelResponse(
                         item = it.getValue(RealtimeModelResponse.RealtimeItems::class.java),
                         key = it.key
@@ -72,7 +70,7 @@ class LocalDataSourceImpl(
     override fun getNote(key: String): Flow<ResultState<RealtimeModelResponse>> = callbackFlow  {
         trySend(ResultState.Loading)
 
-        realtimeDb.child(InMemoryCache.userData.userId!!).child(NOTES).child(key).get()
+        realtimeDb.child(InMemoryCache.userData?.sub!!).child(NOTES).child(key).get()
             .addOnSuccessListener {
                 trySend(ResultState.Success(RealtimeModelResponse(
                     item = it.getValue(RealtimeModelResponse.RealtimeItems::class.java),
@@ -92,7 +90,7 @@ class LocalDataSourceImpl(
     override fun deleteNote(key: String): Flow<ResultState<String>> = callbackFlow {
         trySend(ResultState.Loading)
 
-        realtimeDb.child(InMemoryCache.userData.userId!!).child(NOTES).child(key).removeValue()
+        realtimeDb.child(InMemoryCache.userData?.sub!!).child(NOTES).child(key).removeValue()
             .addOnFailureListener {
                 trySend(ResultState.Failure(it))
             }
@@ -115,7 +113,7 @@ class LocalDataSourceImpl(
         map[USERID] = res.item.userId!!
         map[UPDATED_AT] = res.item.updatedAt!!
 
-        realtimeDb.child(InMemoryCache.userData.userId!!).child(NOTES).child(res.key!!).updateChildren(map)
+        realtimeDb.child(InMemoryCache.userData?.sub!!).child(NOTES).child(res.key!!).updateChildren(map)
             .addOnFailureListener {
                 trySend(ResultState.Failure(it))
             }
