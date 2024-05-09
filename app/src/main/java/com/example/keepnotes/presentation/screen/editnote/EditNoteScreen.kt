@@ -1,7 +1,11 @@
 package com.example.keepnotes.presentation.screen.editnote
 
 
+import android.util.Log
 import android.widget.Toast
+import androidx.compose.animation.AnimatedContentScope
+import androidx.compose.animation.ExperimentalSharedTransitionApi
+import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -43,15 +47,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
 import com.example.keepnotes.presentation.common.ProgressIndicator
 import com.example.keepnotes.presentation.component.EditNoteBottomBar
-import com.example.keepnotes.presentation.component.KeepNotePanel
 import com.example.keepnotes.presentation.component.KeepNoteLinkDialog
+import com.example.keepnotes.presentation.component.KeepNotePanel
 import com.example.keepnotes.ui.theme.BackgroundColor
 import com.example.keepnotes.ui.theme.DIMENS_40dp
 import com.example.keepnotes.ui.theme.GrayTextColor
-import com.example.keepnotes.utils.canGoBack
 import com.example.keepnotes.utils.showToast
 import com.mohamedrejeb.richeditor.annotation.ExperimentalRichTextApi
 import com.mohamedrejeb.richeditor.model.rememberRichTextState
@@ -59,13 +61,17 @@ import com.mohamedrejeb.richeditor.ui.material3.RichTextEditor
 import com.mohamedrejeb.richeditor.ui.material3.RichTextEditorDefaults
 
 
-@OptIn(ExperimentalRichTextApi::class, ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalRichTextApi::class, ExperimentalMaterial3Api::class,
+    ExperimentalSharedTransitionApi::class
+)
 @Composable
-fun EditNoteScreen(
+fun SharedTransitionScope.EditNoteScreen(
     navController: NavController,
     noteId: String = "-1",
     editNoteViewModel: EditNoteViewModel = hiltViewModel(),
+    animatedContentScope: AnimatedContentScope,
 ) {
+    Log.d("EditNoteScreen","recompose")
     var titleInput by remember { mutableStateOf("") }
     var noteInput by remember { mutableStateOf("") }
     var isShowTextEditorPanel by remember { mutableStateOf(false) }
@@ -124,9 +130,7 @@ fun EditNoteScreen(
                             DIMENS_40dp
                         )
                         .clickable {
-                            if (navController.canGoBack) {
-                                navController.popBackStack()
-                            }
+                            navController.popBackStack()
 
                         }
                 )
@@ -170,7 +174,7 @@ fun EditNoteScreen(
                 ProgressIndicator()
             } else {
                 // Editable text
-                EditableTextField(text = titleInput, placeholderText = "Title") { newText ->
+                EditableTextField(text = titleInput, placeholderText = "Title", animatedContentScope) { newText ->
                     titleInput = newText
                 }
 
@@ -190,7 +194,12 @@ fun EditNoteScreen(
                         placeholderColor = Color.White.copy(alpha = .6f),
                     ),
                     modifier = Modifier
+                        .sharedElement(
+                            state = rememberSharedContentState(key = "text-${richTextState.annotatedString}"),
+                            animatedVisibilityScope = animatedContentScope
+                        )
                         .fillMaxWidth()
+
 
                 )
 
@@ -229,10 +238,12 @@ fun EditNoteScreen(
 
 }
 
+@OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
-fun EditableTextField(
+fun SharedTransitionScope.EditableTextField(
     text: String,
     placeholderText: String,
+    animatedContentScope: AnimatedContentScope,
     onTextChanged: (String) -> Unit
 ) {
     var isKeyboardVisible by remember { mutableStateOf(false) }
@@ -255,6 +266,10 @@ fun EditableTextField(
             color = GrayTextColor
         ) else MaterialTheme.typography.titleMedium.copy(color = GrayTextColor),
         modifier = Modifier
+            .sharedElement(
+                state = rememberSharedContentState(key = "text-${text}"),
+                animatedVisibilityScope = animatedContentScope
+            )
             .fillMaxWidth()
             .onFocusChanged { isKeyboardVisible = it.isFocused },
         colors = TextFieldDefaults.outlinedTextFieldColors(
@@ -286,8 +301,12 @@ fun EditableTextField(
 }
 
 
+@OptIn(ExperimentalSharedTransitionApi::class)
 @Preview(showBackground = true)
 @Composable
 fun EditNoteScreenPreview() {
-    EditNoteScreen(navController = rememberNavController())
+//    EditNoteScreen(
+//        navController = rememberNavController(),
+//        animatedContentScope = animatedContentScope
+//    )
 }
