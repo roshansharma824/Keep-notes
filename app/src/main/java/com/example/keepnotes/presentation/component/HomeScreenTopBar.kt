@@ -1,11 +1,7 @@
 package com.example.keepnotes.presentation.component
 
-import android.app.Activity
 import android.content.Intent
 import android.widget.Toast
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.IntentSenderRequest
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -24,6 +20,7 @@ import androidx.compose.material.icons.filled.Menu
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -38,18 +35,19 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
 import com.example.keepnotes.MainActivity
 import com.example.keepnotes.R
-import com.example.keepnotes.data.auth.GoogleAuthUiClient
-import com.example.keepnotes.data.local.InMemoryCache
+import com.example.keepnotes.data.auth.GoogleUser
+import com.example.keepnotes.data.auth.OneTapSignInWithGoogle
+import com.example.keepnotes.data.auth.SignInResult
+import com.example.keepnotes.data.auth.getUserFromTokenId
+import com.example.keepnotes.data.auth.rememberOneTapSignInState
 import com.example.keepnotes.presentation.common.ProgressIndicator
 import com.example.keepnotes.presentation.screen.loginscreen.LoginViewModel
 import com.example.keepnotes.presentation.screen.loginscreen.SignInViewModel
 import com.example.keepnotes.ui.theme.BackgroundColor
-import com.example.keepnotes.ui.theme.DIMENS_0dp
 import com.example.keepnotes.ui.theme.DIMENS_16dp
 import com.example.keepnotes.ui.theme.DIMENS_1dp
 import com.example.keepnotes.ui.theme.DIMENS_20dp
@@ -59,7 +57,6 @@ import com.example.keepnotes.ui.theme.DIMENS_8dp
 import com.example.keepnotes.ui.theme.TEXT_SIZE_18sp
 import com.example.keepnotes.ui.theme.TopBarBackgroundColor
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
-import com.google.android.gms.auth.api.identity.Identity
 import kotlinx.coroutines.launch
 
 
@@ -74,16 +71,12 @@ fun HomeScreenTopBar(
         systemUiController.setSystemBarsColor(BackgroundColor)
     }
     val context = LocalContext.current
-    val googleAuthUiClient by lazy {
-        GoogleAuthUiClient(
-            context = context.applicationContext,
-            oneTapClient = Identity.getSignInClient(context.applicationContext)
-        )
-    }
     val scope = rememberCoroutineScope()
     lateinit var loginViewModel: LoginViewModel
-    val viewModel = viewModel<SignInViewModel>()
-    val state by viewModel.state.collectAsStateWithLifecycle()
+    val viewModel = hiltViewModel<SignInViewModel>()
+    val oneTapSignInState = rememberOneTapSignInState()
+    var user: GoogleUser? by remember { mutableStateOf(null) }
+    val userProfileUrl by viewModel.userProfileUrl.collectAsState()
     var isLoading by remember {
         mutableStateOf(false)
     }
@@ -91,37 +84,43 @@ fun HomeScreenTopBar(
         mutableStateOf(false)
     }
 
+    OneTapSignInWithGoogle(
+        state = oneTapSignInState,
+        clientId = context.getString(R.string.web_client_id),
+        rememberAccount = true,
+        onTokenIdReceived = {
+            user = getUserFromTokenId(tokenId = it)
+            scope.launch {
+                user?.sub?.let { userId ->
+                    viewModel.saveUserId(userId)
+                }
+                user?.picture?.let { it1 ->
+                    viewModel.saveUserProfileUrl(it1)
+                }
+            }
+            viewModel.onSignInResult(SignInResult(data = user, errorMessage = null))
+        },
+        onDialogDismissed = {
+            isLoading = false
+            viewModel.onSignInResult(SignInResult(data = null, errorMessage = it))
+        }
+    )
 
-    LaunchedEffect(key1 = state.isSignInSuccessful) {
-        if (state.isSignInSuccessful) {
+
+    LaunchedEffect(key1 = user) {
+        user?.let{
             Toast.makeText(
                 context.applicationContext,
                 "Sign in successful",
                 Toast.LENGTH_SHORT
             ).show()
-            loginViewModel = LoginViewModel(googleAuthUiClient.getSignedInUser()!!)
+            loginViewModel = LoginViewModel(userData = user)
             val refresh = Intent(context, MainActivity::class.java)
             context.startActivity(refresh)
             viewModel.resetState()
         }
 
     }
-
-    val launcher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.StartIntentSenderForResult(),
-        onResult = { result ->
-            if (result.resultCode == Activity.RESULT_OK) {
-                scope.launch {
-                    isLoading = true
-                    val signInResult = googleAuthUiClient.signInWithIntent(
-                        intent = result.data ?: return@launch
-                    )
-                    viewModel.onSignInResult(signInResult)
-                }
-            }
-            isLoading = false
-        }
-    )
 
     Box(
         modifier = Modifier.padding(horizontal = DIMENS_16dp, vertical = DIMENS_8dp)
@@ -146,33 +145,26 @@ fun HomeScreenTopBar(
                     )
                 }
                 AsyncImage(
-                    model = "${InMemoryCache.userData.profilePictureUrl}",
+                    model = userProfileUrl,
                     contentDescription = "profile img",
-                    contentScale = ContentScale.Fit,            // crop the image if it's not a square
+                    contentScale = ContentScale.Fit,
                     modifier = Modifier
                         .size(DIMENS_34dp)
-                        .clip(CircleShape)                       // clip to the circle shape
+                        .clip(CircleShape)
                         .border(DIMENS_1dp, Color.Gray, CircleShape)
                         .clickable {
-                            scope.launch {
-                                val signInIntentSender = googleAuthUiClient.signIn()
-                                launcher.launch(
-                                    IntentSenderRequest
-                                        .Builder(
-                                            signInIntentSender ?: return@launch
-                                        )
-                                        .build()
-                                )
-                            }
+                            oneTapSignInState.open()
                             isLoading = true
-                        }   // add a border (optional)
+                        }
                 )
             },
             elevation = DIMENS_1dp,
             title = {
                 Text(
                     text = "Search yours notes",
-                    modifier = Modifier.fillMaxWidth().align(Alignment.TopStart),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .align(Alignment.TopStart),
                     textAlign = TextAlign.Start,
                     color = Color.White,
                     fontWeight = FontWeight.Light,
@@ -192,7 +184,7 @@ fun HomeScreenTopBar(
                 IconButton(onClick = { onClickAction.invoke() }) {
                     Icon(
                         imageVector = Icons.Filled.Menu,
-                        contentDescription = "Localized description",
+                        contentDescription = "Menu icon",
                         tint = Color.White
                     )
                 }

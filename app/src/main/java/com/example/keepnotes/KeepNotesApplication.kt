@@ -10,5 +10,6 @@ class KeepNotesApplication : Application() {
     override fun onCreate() {
         super.onCreate()
         Firebase.database.setPersistenceEnabled(true)
+//        UserStore(applicationContext)
     }
 }

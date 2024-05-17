@@ -2,7 +2,7 @@ package com.example.keepnotes.data.auth
 
 
 data class SignInResult(
-    val data: UserData?,
+    val data: GoogleUser?,
     val errorMessage: String?
 )
 
