@@ -344,7 +344,7 @@ fun SharedTransitionScope.NoteCard(
                 ),
                 textAlign = TextAlign.Left,
                 modifier = Modifier.sharedElement(
-                    state = rememberSharedContentState(key = "text-${item.item.title}"),
+                    state = rememberSharedContentState(key = "title-${item.item.title}"),
                     animatedVisibilityScope = animatedContentScope
                 )
             )

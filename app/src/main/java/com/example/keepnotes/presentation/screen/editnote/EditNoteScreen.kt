@@ -267,7 +267,7 @@ fun SharedTransitionScope.EditableTextField(
         ) else MaterialTheme.typography.titleMedium.copy(color = GrayTextColor),
         modifier = Modifier
             .sharedElement(
-                state = rememberSharedContentState(key = "text-${text}"),
+                state = rememberSharedContentState(key = "title-${text}"),
                 animatedVisibilityScope = animatedContentScope
             )
             .fillMaxWidth()
