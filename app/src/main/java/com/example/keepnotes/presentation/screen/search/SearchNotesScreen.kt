@@ -16,9 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import com.example.keepnotes.navigation.screen.Screen
 import com.example.keepnotes.presentation.component.SearchScreenTopBar
-import com.example.keepnotes.presentation.screen.allnotes.NoteCard
 import com.example.keepnotes.ui.theme.BackgroundColor
 import com.example.keepnotes.ui.theme.DIMENS_8dp
 
@@ -60,16 +58,16 @@ fun SearchNotesScreen(
             ) {
                 items(allNotes, key = { it.key!! }) { item ->
 
-                    NoteCard(
-                        item = item,
-                        isSelected = false,
-                        onClick = {
-                            navController.navigate(Screen.EditNote.passNoteId(noteId = "${item.key}"))
-                        },
-                        onLongClick = {
-
-                        }
-                    )
+//                    NoteCard(
+//                        item = item,
+//                        isSelected = false,
+//                        onClick = {
+//                            navController.navigate(Screen.EditNote.passNoteId(noteId = "${item.key}"))
+//                        },
+//                        onLongClick = {
+//
+//                        }
+//                    )
                 }
             }
         }
