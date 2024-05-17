@@ -3,7 +3,7 @@ plugins {
     id("org.jetbrains.kotlin.android")
     kotlin("kapt")
     id("com.google.dagger.hilt.android")
-    id ("com.google.devtools.ksp")
+    id("com.google.devtools.ksp")
     id("com.google.gms.google-services")
 }
 
@@ -66,7 +66,7 @@ dependencies {
     implementation("androidx.compose.material3:material3:1.2.1")
     implementation("androidx.compose.material3:material3-window-size-class:1.1.2")
     implementation("androidx.lifecycle:lifecycle-runtime-compose:2.7.0")
-    implementation( "androidx.constraintlayout:constraintlayout-compose:1.0.1")
+    implementation("androidx.constraintlayout:constraintlayout-compose:1.0.1")
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
@@ -79,11 +79,11 @@ dependencies {
     kapt("com.google.dagger:hilt-android-compiler:2.48")
 
     // System UI Controller - Accompanist
-    implementation ("com.google.accompanist:accompanist-systemuicontroller:0.21.2-beta")
+    implementation("com.google.accompanist:accompanist-systemuicontroller:0.21.2-beta")
 
-    implementation ("androidx.hilt:hilt-navigation-compose:1.2.0")
+    implementation("androidx.hilt:hilt-navigation-compose:1.2.0")
     // Testing
-    androidTestImplementation ("androidx.navigation:navigation-testing:2.7.7")
+    androidTestImplementation("androidx.navigation:navigation-testing:2.7.7")
 
     // Room Components
     val room_version = "2.6.0"
@@ -112,7 +112,9 @@ dependencies {
     implementation("com.squareup.okhttp3:okhttp:4.12.0")
 
     implementation("com.mohamedrejeb.richeditor:richeditor-compose:1.0.0-rc04")
-    implementation ("androidx.compose.material:material-icons-extended-android:1.6.5")
+    implementation("androidx.compose.material:material-icons-extended-android:1.6.5")
+    //Preferences DataStore
+    implementation("androidx.datastore:datastore-preferences:1.1.1")
 
 
     // Contains the core Credential Manager functionalities including password

@@ -1,7 +1,7 @@
 package com.example.keepnotes.data.local
 
-import com.example.keepnotes.data.auth.GoogleUser
+import com.example.keepnotes.domain.model.User
 
 object InMemoryCache {
-    var userData: GoogleUser ? = null
+    var userData: User = User()
 }

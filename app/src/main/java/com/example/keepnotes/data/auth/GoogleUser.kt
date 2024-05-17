@@ -7,7 +7,7 @@ import com.auth0.android.jwt.JWT
 
 @Immutable
 data class GoogleUser(
-    val sub: String?,
+    var sub: String?,
     val email: String?,
     val emailVerified: Boolean?,
     val fullName: String?,

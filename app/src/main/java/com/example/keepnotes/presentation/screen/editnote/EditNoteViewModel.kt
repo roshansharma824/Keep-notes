@@ -77,7 +77,7 @@ class EditNoteViewModel @Inject constructor(
     fun addNote() = viewModelScope.launch {
 
         val item = RealtimeModelResponse.RealtimeItems(
-            userId = InMemoryCache.userData?.sub,
+            userId = InMemoryCache.userData.userId,
             title = titleInput,
             note = noteInput,
             createdAt = System.currentTimeMillis(),
@@ -93,7 +93,7 @@ class EditNoteViewModel @Inject constructor(
 
         val item = RealtimeModelResponse(
             item = RealtimeModelResponse.RealtimeItems(
-                userId = InMemoryCache.userData?.sub,
+                userId = InMemoryCache.userData.userId,
                 title = titleInput,
                 note = noteInput,
                 updatedAt = System.currentTimeMillis()

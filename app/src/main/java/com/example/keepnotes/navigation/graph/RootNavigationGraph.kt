@@ -10,8 +10,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -21,6 +21,7 @@ import com.example.keepnotes.data.auth.OneTapSignInWithGoogle
 import com.example.keepnotes.data.auth.SignInResult
 import com.example.keepnotes.data.auth.getUserFromTokenId
 import com.example.keepnotes.data.auth.rememberOneTapSignInState
+import com.example.keepnotes.data.local.InMemoryCache
 import com.example.keepnotes.navigation.screen.Screen
 import com.example.keepnotes.presentation.screen.loginscreen.LoginScreen
 import com.example.keepnotes.presentation.screen.loginscreen.LoginViewModel
@@ -41,16 +42,19 @@ fun RootNavigationGraph(navHostController: NavHostController) {
         route = Graph.ROOT,
         startDestination = Screen.Splash.route
     ) {
-        composable(route = Screen.Splash.route){
+        composable(route = Screen.Splash.route) {
             SplashScreen(navController = navHostController)
         }
 
-        composable(route = Screen.Login.route){
-            lateinit var loginViewModel : LoginViewModel
+        composable(route = Screen.Login.route) {
+            lateinit var loginViewModel: LoginViewModel
             val oneTapSignInState = rememberOneTapSignInState()
             var user: GoogleUser? by remember { mutableStateOf(null) }
-            val viewModel = viewModel<SignInViewModel>()
+            val viewModel = hiltViewModel<SignInViewModel>()
             val state by viewModel.state.collectAsStateWithLifecycle()
+            val userId by viewModel.userId.collectAsStateWithLifecycle()
+            val userProfileUrl by viewModel.userProfileUrl.collectAsStateWithLifecycle()
+
 
             OneTapSignInWithGoogle(
                 state = oneTapSignInState,
@@ -58,47 +62,45 @@ fun RootNavigationGraph(navHostController: NavHostController) {
                 rememberAccount = true,
                 onTokenIdReceived = {
                     user = getUserFromTokenId(tokenId = it)
+                    scope.launch {
+                        user?.sub?.let { userId ->
+                            viewModel.saveUserId(userId)
+                        }
+                        user?.picture?.let { it1 ->
+                            viewModel.saveUserProfileUrl(it1)
+                        }
+                    }
+
                     viewModel.onSignInResult(SignInResult(data = user, errorMessage = null))
-                    Log.d("MainActivity", user.toString())
+                    Log.d("RootNavigationGraph", user.toString())
                 },
                 onDialogDismissed = {
                     viewModel.onSignInResult(SignInResult(data = null, errorMessage = it))
-                    Log.d("MainActivity", it)
+                    Log.d("RootNavigationGraph", it)
                 }
             )
 
             LaunchedEffect(key1 = user) {
+                Log.d("RootNavigationGraph1", userId)
                 user?.let {
-                    loginViewModel = LoginViewModel(userData = it)
+                    InMemoryCache.userData.userId = userId
+                    InMemoryCache.userData.profilrUrl = userProfileUrl
+                    Log.d("RootNavigationGraph11", user.toString())
+                    loginViewModel = LoginViewModel(userData = user)
                     navHostController.navigate(Graph.MAIN)
                 }
             }
 
-//            val launcher = rememberLauncherForActivityResult(
-//                contract = ActivityResultContracts.StartIntentSenderForResult(),
-//                onResult = { result ->
-//                    if(result.resultCode == Activity.RESULT_OK) {
-//                        scope.launch {
-//                            val signInResult = googleAuthUiClient.signInWithIntent(
-//                                intent = result.data ?: return@launch
-//                            )
-//                            viewModel.onSignInResult(signInResult)
-//                        }
-//                    }
-//                }
-//            )
-
             LaunchedEffect(key1 = state.isSignInSuccessful) {
-                if(state.isSignInSuccessful) {
+                Log.d("RootNavigationGraph2", userId)
+                if (state.isSignInSuccessful) {
                     Toast.makeText(
                         context.applicationContext,
                         "Sign in successful",
                         Toast.LENGTH_SHORT
                     ).show()
-                    user?.let {
-                        loginViewModel = LoginViewModel(userData = it)
-                    }
-
+                    Log.d("RootNavigationGraph21", userId)
+                    loginViewModel = LoginViewModel(userData = user)
                     navHostController.navigate(Graph.MAIN)
                     viewModel.resetState()
                 }
@@ -108,19 +110,11 @@ fun RootNavigationGraph(navHostController: NavHostController) {
                 state = state,
                 onSignInClick = {
                     oneTapSignInState.open()
-                    scope.launch {
-//                        val signInIntentSender = googleAuthUiClient.signIn()
-//                        launcher.launch(
-//                            IntentSenderRequest.Builder(
-//                                signInIntentSender ?: return@launch
-//                            ).build()
-//                        )
-                    }
                 }
             )
         }
 
-        composable(route = Graph.MAIN){
+        composable(route = Graph.MAIN) {
             MainNavGraph()
         }
     }

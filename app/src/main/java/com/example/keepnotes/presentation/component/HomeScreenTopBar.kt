@@ -1,7 +1,6 @@
 package com.example.keepnotes.presentation.component
 
 import android.app.Activity
-import android.content.Intent
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.IntentSenderRequest
@@ -24,6 +23,7 @@ import androidx.compose.material.icons.filled.Menu
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -38,13 +38,11 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
-import com.example.keepnotes.MainActivity
 import com.example.keepnotes.R
 import com.example.keepnotes.data.auth.GoogleAuthUiClient
-import com.example.keepnotes.data.local.InMemoryCache
 import com.example.keepnotes.presentation.common.ProgressIndicator
 import com.example.keepnotes.presentation.screen.loginscreen.LoginViewModel
 import com.example.keepnotes.presentation.screen.loginscreen.SignInViewModel
@@ -81,8 +79,9 @@ fun HomeScreenTopBar(
     }
     val scope = rememberCoroutineScope()
     lateinit var loginViewModel: LoginViewModel
-    val viewModel = viewModel<SignInViewModel>()
+    val viewModel = hiltViewModel<SignInViewModel>()
     val state by viewModel.state.collectAsStateWithLifecycle()
+    val userProfileUrl by viewModel.userProfileUrl.collectAsState()
     var isLoading by remember {
         mutableStateOf(false)
     }
@@ -99,9 +98,9 @@ fun HomeScreenTopBar(
                 Toast.LENGTH_SHORT
             ).show()
 //            loginViewModel = LoginViewModel(googleAuthUiClient.getSignedInUser()!!)
-            val refresh = Intent(context, MainActivity::class.java)
-            context.startActivity(refresh)
-            viewModel.resetState()
+//            val refresh = Intent(context, MainActivity::class.java)
+//            context.startActivity(refresh)
+//            viewModel.resetState()
         }
 
     }
@@ -145,7 +144,7 @@ fun HomeScreenTopBar(
                     )
                 }
                 AsyncImage(
-                    model = "${InMemoryCache.userData?.picture}",
+                    model = userProfileUrl,
                     contentDescription = "profile img",
                     contentScale = ContentScale.Fit,            // crop the image if it's not a square
                     modifier = Modifier
@@ -171,7 +170,9 @@ fun HomeScreenTopBar(
             title = {
                 Text(
                     text = "Search yours notes",
-                    modifier = Modifier.fillMaxWidth().align(Alignment.TopStart),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .align(Alignment.TopStart),
                     textAlign = TextAlign.Start,
                     color = Color.White,
                     fontWeight = FontWeight.Light,
