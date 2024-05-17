@@ -1,6 +1,6 @@
 package com.example.keepnotes.navigation.graph
 
-import android.util.Log
+import android.widget.Toast
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -74,40 +74,34 @@ fun RootNavigationGraph(navHostController: NavHostController) {
                         }
                     }
                     viewModel.onSignInResult(SignInResult(data = user, errorMessage = null))
-                    Log.d("RootNavigationGraph", user.toString())
                 },
                 onDialogDismissed = {
                     isLoading = false
                     viewModel.onSignInResult(SignInResult(data = null, errorMessage = it))
-                    Log.d("RootNavigationGraph", it)
                 }
             )
 
             LaunchedEffect(key1 = user) {
-                Log.d("RootNavigationGraph1", userId)
                 user?.let {
+                    Toast.makeText(
+                        context.applicationContext,
+                        "Sign in successful",
+                        Toast.LENGTH_SHORT
+                    ).show()
                     InMemoryCache.userData.userId = userId
                     InMemoryCache.userData.profilrUrl = userProfileUrl
-                    Log.d("RootNavigationGraph11", user.toString())
                     loginViewModel = LoginViewModel(userData = user)
                     navHostController.navigate(Graph.MAIN)
                 }
             }
 
-//            LaunchedEffect(key1 = state.isSignInSuccessful) {
-//                Log.d("RootNavigationGraph2", userId)
-//                if (state.isSignInSuccessful) {
-//                    Toast.makeText(
-//                        context.applicationContext,
-//                        "Sign in successful",
-//                        Toast.LENGTH_SHORT
-//                    ).show()
-//                    Log.d("RootNavigationGraph21", userId)
-//                    loginViewModel = LoginViewModel(userData = user)
-//                    navHostController.navigate(Graph.MAIN)
-//                    viewModel.resetState()
-//                }
-//            }
+            LaunchedEffect(key1 = state.isSignInSuccessful) {
+                if (state.isSignInSuccessful) {
+                    loginViewModel = LoginViewModel(userData = user)
+                    viewModel.resetState()
+                    navHostController.navigate(Graph.MAIN)
+                }
+            }
 
             LoginScreen(
                 state = state,

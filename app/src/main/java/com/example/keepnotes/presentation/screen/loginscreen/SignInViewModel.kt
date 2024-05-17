@@ -1,6 +1,5 @@
 package com.example.keepnotes.presentation.screen.loginscreen
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.keepnotes.data.auth.SignInResult
@@ -39,7 +38,6 @@ class SignInViewModel @Inject constructor(
     private fun getData() {
         viewModelScope.launch(Dispatchers.IO) {
             keepNoteDataStore.getUserId.zip(keepNoteDataStore.getUserProfileUrl){ userId, userProfileUrl->
-                Log.d("SignInViewModel get", userId)
                 if (userId.isNotEmpty()) {
                     InMemoryCache.userData.userId = userId
                     _userId.update {
@@ -52,8 +50,6 @@ class SignInViewModel @Inject constructor(
                         )
                     }
                 }
-
-                Log.d("SignInViewModel get", userProfileUrl)
                 if (userProfileUrl.isNotEmpty()) {
                     InMemoryCache.userData.profilrUrl = userProfileUrl
                     _userProfileUrl.update {
@@ -74,7 +70,6 @@ class SignInViewModel @Inject constructor(
     }
 
     fun saveUserProfileUrl(userProfileUrl: String) {
-        Log.d("SignInViewModel set", userProfileUrl)
         viewModelScope.launch {
             keepNoteDataStore.saveUserProfileUrl(userProfileUrl)
         }
