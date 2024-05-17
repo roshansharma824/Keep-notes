@@ -77,7 +77,6 @@ fun OneTapSignInWithGoogle(
     LaunchedEffect(key1 = state.opened) {
         if (state.opened) {
             scope.launch {
-                Log.d("MainActivity", "${state.opened}")
 
                 try {
                     val response = credentialManager.getCredential(
@@ -98,42 +97,12 @@ fun OneTapSignInWithGoogle(
                         }
                     )
                 } catch (e: GetCredentialException) {
-                    Log.d("MainActivity", "$e ${e.message}  ${e.errorMessage}")
-                    if (e.message != null) {
-                        if (e.message!!.contains("No credentials available")) {
-                            handleCredentialsNotAvailable(
-                                context = context,
-                                state = state,
-                                credentialManager = credentialManager,
-                                clientId = clientId,
-                                nonce = nonce,
-                                onTokenIdReceived = onTokenIdReceived,
-                                onDialogDismissed = onDialogDismissed
-                            )
-                        }
-                    } else {
-                        try {
-                            val errorMessage = if (e.message != null) {
-                                if (e.message!!.contains("activity is cancelled by the user.")) {
-                                    "Dialog Closed."
-                                } else if (e.message!!.contains("Caller has been temporarily blocked")) {
-                                    "Sign in has been Temporarily Blocked due to too many Closed Prompts."
-                                } else {
-                                    e.message.toString()
-                                }
-                            } else "Unknown Error."
-                            Log.e(TAG, errorMessage)
-                            onDialogDismissed(errorMessage)
-                            state.close()
-                        } catch (e: Exception) {
-                            Log.e(TAG, "${e.message}")
-                            onDialogDismissed("${e.message}")
-                            state.close()
-                        }
-                    }
+                    Log.d(TAG, "$e ${e.message}  ${e.errorMessage}")
+                    e.message?.let { onDialogDismissed(it) }
+                    state.close()
                 } catch (e: Exception) {
                     if (e.message != null) {
-                        if (e.message!!.contains("No credentials available")) {
+                        if (e.message!!.contains("Cannot find a matching credential")) {
                             handleCredentialsNotAvailable(
                                 context = context,
                                 state = state,

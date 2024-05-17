@@ -1,7 +1,6 @@
 package com.example.keepnotes.navigation.graph
 
 import android.util.Log
-import android.widget.Toast
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -23,6 +22,7 @@ import com.example.keepnotes.data.auth.getUserFromTokenId
 import com.example.keepnotes.data.auth.rememberOneTapSignInState
 import com.example.keepnotes.data.local.InMemoryCache
 import com.example.keepnotes.navigation.screen.Screen
+import com.example.keepnotes.presentation.common.ProgressIndicator
 import com.example.keepnotes.presentation.screen.loginscreen.LoginScreen
 import com.example.keepnotes.presentation.screen.loginscreen.LoginViewModel
 import com.example.keepnotes.presentation.screen.loginscreen.SignInViewModel
@@ -54,6 +54,9 @@ fun RootNavigationGraph(navHostController: NavHostController) {
             val state by viewModel.state.collectAsStateWithLifecycle()
             val userId by viewModel.userId.collectAsStateWithLifecycle()
             val userProfileUrl by viewModel.userProfileUrl.collectAsStateWithLifecycle()
+            var isLoading by remember {
+                mutableStateOf(false)
+            }
 
 
             OneTapSignInWithGoogle(
@@ -70,11 +73,11 @@ fun RootNavigationGraph(navHostController: NavHostController) {
                             viewModel.saveUserProfileUrl(it1)
                         }
                     }
-
                     viewModel.onSignInResult(SignInResult(data = user, errorMessage = null))
                     Log.d("RootNavigationGraph", user.toString())
                 },
                 onDialogDismissed = {
+                    isLoading = false
                     viewModel.onSignInResult(SignInResult(data = null, errorMessage = it))
                     Log.d("RootNavigationGraph", it)
                 }
@@ -91,27 +94,32 @@ fun RootNavigationGraph(navHostController: NavHostController) {
                 }
             }
 
-            LaunchedEffect(key1 = state.isSignInSuccessful) {
-                Log.d("RootNavigationGraph2", userId)
-                if (state.isSignInSuccessful) {
-                    Toast.makeText(
-                        context.applicationContext,
-                        "Sign in successful",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                    Log.d("RootNavigationGraph21", userId)
-                    loginViewModel = LoginViewModel(userData = user)
-                    navHostController.navigate(Graph.MAIN)
-                    viewModel.resetState()
-                }
-            }
+//            LaunchedEffect(key1 = state.isSignInSuccessful) {
+//                Log.d("RootNavigationGraph2", userId)
+//                if (state.isSignInSuccessful) {
+//                    Toast.makeText(
+//                        context.applicationContext,
+//                        "Sign in successful",
+//                        Toast.LENGTH_SHORT
+//                    ).show()
+//                    Log.d("RootNavigationGraph21", userId)
+//                    loginViewModel = LoginViewModel(userData = user)
+//                    navHostController.navigate(Graph.MAIN)
+//                    viewModel.resetState()
+//                }
+//            }
 
             LoginScreen(
                 state = state,
                 onSignInClick = {
                     oneTapSignInState.open()
+                    isLoading = true
                 }
             )
+            if (isLoading){
+                ProgressIndicator()
+            }
+
         }
 
         composable(route = Graph.MAIN) {
