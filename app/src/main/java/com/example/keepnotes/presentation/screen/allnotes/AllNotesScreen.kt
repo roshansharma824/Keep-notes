@@ -354,7 +354,7 @@ fun SharedTransitionScope.NoteCard(
                 color = Color.White,
                 modifier = Modifier
                     .sharedElement(
-                        state = rememberSharedContentState(key = "text-${richTextState.annotatedString}"),
+                        state = rememberSharedContentState(key = "note-${item.key}"),
                         animatedVisibilityScope = animatedContentScope
                     ).fillMaxWidth()
             )

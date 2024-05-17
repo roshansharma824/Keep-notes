@@ -195,7 +195,7 @@ fun SharedTransitionScope.EditNoteScreen(
                     ),
                     modifier = Modifier
                         .sharedElement(
-                            state = rememberSharedContentState(key = "text-${richTextState.annotatedString}"),
+                            state = rememberSharedContentState(key = "note-${note.item.key}"),
                             animatedVisibilityScope = animatedContentScope
                         )
                         .fillMaxWidth()
