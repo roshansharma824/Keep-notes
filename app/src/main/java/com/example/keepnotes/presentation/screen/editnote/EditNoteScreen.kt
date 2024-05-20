@@ -37,9 +37,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
@@ -61,7 +64,8 @@ import com.mohamedrejeb.richeditor.ui.material3.RichTextEditor
 import com.mohamedrejeb.richeditor.ui.material3.RichTextEditorDefaults
 
 
-@OptIn(ExperimentalRichTextApi::class, ExperimentalMaterial3Api::class,
+@OptIn(
+    ExperimentalRichTextApi::class, ExperimentalMaterial3Api::class,
     ExperimentalSharedTransitionApi::class
 )
 @Composable
@@ -71,7 +75,7 @@ fun SharedTransitionScope.EditNoteScreen(
     editNoteViewModel: EditNoteViewModel = hiltViewModel(),
     animatedContentScope: AnimatedContentScope,
 ) {
-    Log.d("EditNoteScreen","recompose")
+    Log.d("EditNoteScreen", "recompose")
     var titleInput by remember { mutableStateOf("") }
     var noteInput by remember { mutableStateOf("") }
     var isShowTextEditorPanel by remember { mutableStateOf(false) }
@@ -137,7 +141,7 @@ fun SharedTransitionScope.EditNoteScreen(
             }
         },
         bottomBar = {
-            if (isShowTextEditorPanel){
+            if (isShowTextEditorPanel) {
                 KeepNotePanel(
                     state = richTextState,
                     openLinkDialog = openLinkDialog,
@@ -149,7 +153,7 @@ fun SharedTransitionScope.EditNoteScreen(
                         isShowTextEditorPanel = !isShowTextEditorPanel
                     }
                 )
-            }else{
+            } else {
                 EditNoteBottomBar(
                     updatedAt = note.item.item?.updatedAt ?: System.currentTimeMillis(),
                     isShowTextEditorPanel = {
@@ -174,7 +178,11 @@ fun SharedTransitionScope.EditNoteScreen(
                 ProgressIndicator()
             } else {
                 // Editable text
-                EditableTextField(text = titleInput, placeholderText = "Title", animatedContentScope) { newText ->
+                EditableTextField(
+                    text = titleInput,
+                    placeholderText = "Title",
+                    animatedContentScope
+                ) { newText ->
                     titleInput = newText
                 }
 
@@ -246,7 +254,13 @@ fun SharedTransitionScope.EditableTextField(
     animatedContentScope: AnimatedContentScope,
     onTextChanged: (String) -> Unit
 ) {
-    var isKeyboardVisible by remember { mutableStateOf(false) }
+    var isKeyboardVisible by remember { mutableStateOf(true) }
+    val focusRequester = remember { FocusRequester() }
+    val keyboardController = LocalSoftwareKeyboardController.current
+
+    LaunchedEffect(Unit) {
+        focusRequester.requestFocus()
+    }
 
     TextField(
         value = text,
@@ -271,7 +285,12 @@ fun SharedTransitionScope.EditableTextField(
                 animatedVisibilityScope = animatedContentScope
             )
             .fillMaxWidth()
-            .onFocusChanged { isKeyboardVisible = it.isFocused },
+            .focusRequester(focusRequester)
+            .onFocusChanged {
+                if (it.isFocused) {
+                    keyboardController?.show()
+                }
+            },
         colors = TextFieldDefaults.outlinedTextFieldColors(
             backgroundColor = BackgroundColor,
             focusedBorderColor = BackgroundColor,

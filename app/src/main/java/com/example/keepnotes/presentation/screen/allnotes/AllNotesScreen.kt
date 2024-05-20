@@ -295,7 +295,7 @@ fun SharedTransitionScope.NoteCard(
     isSelected: Boolean,
     animatedContentScope: AnimatedContentScope,
 ) {
-
+   Log.d("NoteCard","re-compose")
     val richTextState = rememberRichTextState()
 
     item.item?.note?.let {

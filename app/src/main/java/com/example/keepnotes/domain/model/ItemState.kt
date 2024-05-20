@@ -1,5 +1,8 @@
 package com.example.keepnotes.domain.model
 
+import androidx.compose.runtime.Stable
+
+@Stable
 data class ItemState(
     var item: List<RealtimeModelResponse> = emptyList(),
     val error: String = "",

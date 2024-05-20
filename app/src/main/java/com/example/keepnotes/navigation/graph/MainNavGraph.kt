@@ -43,12 +43,15 @@ fun MainNavGraph(navHostController: NavHostController = rememberNavController())
             composable(route = BottomNavItemScreen.Search.route) {
                 SearchNotesScreen(
                     navController = navHostController,
-                    sharedTransitionScope = this@SharedTransitionLayout,
                     animatedContentScope = this@composable
                 )
             }
             composable(route = BottomNavItemScreen.CheckListNote.route) {
-                CheckListNote()
+                CheckListNote(
+                    navController = navHostController,
+                    noteId = "-1",
+                    animatedContentScope = this@composable,
+                )
             }
             composable(route = BottomNavItemScreen.DrawNote.route) {
                 DrawNote()

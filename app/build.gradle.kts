@@ -143,6 +143,8 @@ dependencies {
     // Because JWT Decoder doesn't add those Proguard rules by default.
     implementation("com.google.code.gson:gson:2.10.1")
 
+    implementation("org.burnoutcrew.composereorderable:reorderable:0.9.6")
+
 }
 
 // Allow references to generated code
