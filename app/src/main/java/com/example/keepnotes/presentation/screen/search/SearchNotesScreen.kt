@@ -1,8 +1,5 @@
 package com.example.keepnotes.presentation.screen.search
 
-import androidx.compose.animation.AnimatedContentScope
-import androidx.compose.animation.ExperimentalSharedTransitionApi
-import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -19,19 +16,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import com.example.keepnotes.navigation.screen.Screen
 import com.example.keepnotes.presentation.component.SearchScreenTopBar
-import com.example.keepnotes.presentation.screen.allnotes.NoteCard
 import com.example.keepnotes.ui.theme.BackgroundColor
 import com.example.keepnotes.ui.theme.DIMENS_8dp
 
-@OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 fun SearchNotesScreen(
     searchNotesViewModel: SearchNotesViewModel = hiltViewModel(),
     navController: NavController,
-    sharedTransitionScope: SharedTransitionScope,
-    animatedContentScope: AnimatedContentScope,
+
     ) {
     val context = LocalContext.current
     val allNotes by searchNotesViewModel.searchNotesList.collectAsState()
@@ -65,17 +58,16 @@ fun SearchNotesScreen(
             ) {
                 items(allNotes, key = { it.key!! }) { item ->
 
-                    sharedTransitionScope.NoteCard(
-                        item = item,
-                        isSelected = false,
-                        onClick = {
-                            navController.navigate(Screen.EditNote.passNoteId(noteId = "${item.key}"))
-                        },
-                        onLongClick = {
-
-                        },
-                        animatedContentScope = animatedContentScope
-                    )
+//                    NoteCard(
+//                        item = item,
+//                        isSelected = false,
+//                        onClick = {
+//                            navController.navigate(Screen.EditNote.passNoteId(noteId = "${item.key}"))
+//                        },
+//                        onLongClick = {
+//
+//                        }
+//                    )
                 }
             }
         }
