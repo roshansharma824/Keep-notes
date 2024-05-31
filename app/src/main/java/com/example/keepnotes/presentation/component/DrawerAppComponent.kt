@@ -1,8 +1,5 @@
 package com.example.keepnotes.presentation.component
 
-import androidx.compose.animation.AnimatedContentScope
-import androidx.compose.animation.ExperimentalSharedTransitionApi
-import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -34,6 +31,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 import com.example.keepnotes.R
 import com.example.keepnotes.presentation.screen.allnotes.AllNotesScreen
 import com.example.keepnotes.ui.theme.BackgroundColor
@@ -46,13 +45,8 @@ import com.example.keepnotes.ui.theme.TEXT_SIZE_24sp
 import kotlinx.coroutines.launch
 
 
-@OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
-fun DrawerAppComponent(
-    navController: NavController,
-    sharedTransitionScope: SharedTransitionScope,
-    animatedContentScope: AnimatedContentScope
-) {
+fun DrawerAppComponent(navController: NavController) {
     val drawerState = rememberDrawerState(DrawerValue.Closed)
 
     val currentScreen = remember { mutableStateOf(DrawerAppScreen.Notes) }
@@ -71,7 +65,7 @@ fun DrawerAppComponent(
 
             BodyContentComponent(currentScreen = currentScreen.value, openDrawer = {
                 coroutineScope.launch { drawerState.open() }
-            }, navController = navController, sharedTransitionScope, animatedContentScope)
+            }, navController = navController)
         })
 }
 
@@ -188,20 +182,14 @@ fun getScreenBasedOnIndex(index: Int) = when (index) {
     else -> DrawerAppScreen.Notes
 }
 
-@OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 fun BodyContentComponent(
-    currentScreen: DrawerAppScreen,
-    openDrawer: () -> Unit,
-    navController: NavController,
-    sharedTransitionScope: SharedTransitionScope,
-    animatedContentScope: AnimatedContentScope
+    currentScreen: DrawerAppScreen, openDrawer: () -> Unit, navController: NavController
 ) {
     when (currentScreen) {
-        DrawerAppScreen.Notes -> sharedTransitionScope.AllNotesScreen(
+        DrawerAppScreen.Notes -> AllNotesScreen(
             navController = navController,
-            openDrawer = openDrawer,
-            animatedContentScope = animatedContentScope
+            openDrawer = openDrawer
         )
 
         DrawerAppScreen.Reminders -> Screen2Component(
@@ -212,34 +200,29 @@ fun BodyContentComponent(
             openDrawer
         )
 
-        DrawerAppScreen.Archive -> sharedTransitionScope.AllNotesScreen(
+        DrawerAppScreen.Archive -> AllNotesScreen(
             navController = navController,
-            openDrawer = openDrawer,
-            animatedContentScope = animatedContentScope
+            openDrawer = openDrawer
         )
 
-        DrawerAppScreen.Deleted -> sharedTransitionScope.AllNotesScreen(
+        DrawerAppScreen.Deleted -> AllNotesScreen(
             navController = navController,
-            openDrawer = openDrawer,
-            animatedContentScope = animatedContentScope
+            openDrawer = openDrawer
         )
 
-        DrawerAppScreen.Settings -> sharedTransitionScope.AllNotesScreen(
+        DrawerAppScreen.Settings -> AllNotesScreen(
             navController = navController,
-            openDrawer = openDrawer,
-            animatedContentScope = animatedContentScope
+            openDrawer = openDrawer
         )
 
-        DrawerAppScreen.HelpFeedback -> sharedTransitionScope.AllNotesScreen(
+        DrawerAppScreen.HelpFeedback -> AllNotesScreen(
             navController = navController,
-            openDrawer = openDrawer,
-            animatedContentScope = animatedContentScope
+            openDrawer = openDrawer
         )
         else -> {
-            sharedTransitionScope.AllNotesScreen(
+            AllNotesScreen(
                 navController = navController,
-                openDrawer = openDrawer,
-                animatedContentScope = animatedContentScope
+                openDrawer = openDrawer
             )
         }
     }
@@ -284,8 +267,5 @@ enum class DrawerAppScreen {
 @Preview
 @Composable
 fun DrawerAppComponentPreview() {
-//    DrawerAppComponent(
-//        navController = rememberNavController(),
-//        sharedTransitionScope = sharedTransitionScope
-//    )
+    DrawerAppComponent(navController = rememberNavController())
 }

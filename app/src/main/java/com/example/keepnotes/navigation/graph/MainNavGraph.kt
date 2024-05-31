@@ -1,8 +1,5 @@
 package com.example.keepnotes.navigation.graph
 
-import androidx.compose.animation.ExperimentalSharedTransitionApi
-import androidx.compose.animation.SharedTransitionLayout
-import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
@@ -23,47 +20,37 @@ import com.example.keepnotes.presentation.screen.search.SearchNotesScreen
 import com.example.keepnotes.presentation.screen.voicenote.VoiceNote
 import com.example.keepnotes.utils.Constants.NOTE_ARGUMENT_KEY
 
-@OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 fun MainNavGraph(navHostController: NavHostController = rememberNavController()) {
-    SharedTransitionLayout {
-
-        NavHost(
-            navController = navHostController,
-            route = Graph.MAIN,
-            startDestination = BottomNavItemScreen.Home.route
-        ) {
-            composable(route = BottomNavItemScreen.Home.route) {
-                RootScreen(navController = navHostController,
-                    sharedTransitionScope = this@SharedTransitionLayout, animatedContentScope = this@composable
-                )
-            }
-            composable(route = BottomNavItemScreen.Search.route) {
-                SearchNotesScreen(navController = navHostController)
-            }
-            composable(route = BottomNavItemScreen.CheckListNote.route) {
-                CheckListNote()
-            }
-            composable(route = BottomNavItemScreen.DrawNote.route) {
-                DrawNote()
-            }
-            composable(route = BottomNavItemScreen.VoiceNote.route) {
-                VoiceNote()
-            }
-            composable(route = BottomNavItemScreen.PictureNote.route) {
-                PictureNote()
-            }
-
-            detailsNavGraph(navHostController = navHostController, this@SharedTransitionLayout)
+    NavHost(
+        navController = navHostController,
+        route = Graph.MAIN,
+        startDestination = BottomNavItemScreen.Home.route
+    ) {
+        composable(route = BottomNavItemScreen.Home.route) {
+            RootScreen(navController = navHostController)
         }
+        composable(route = BottomNavItemScreen.Search.route) {
+            SearchNotesScreen(navController = navHostController)
+        }
+        composable(route = BottomNavItemScreen.CheckListNote.route) {
+            CheckListNote()
+        }
+        composable(route = BottomNavItemScreen.DrawNote.route) {
+            DrawNote()
+        }
+        composable(route = BottomNavItemScreen.VoiceNote.route) {
+            VoiceNote()
+        }
+        composable(route = BottomNavItemScreen.PictureNote.route) {
+            PictureNote()
+        }
+
+        detailsNavGraph(navHostController = navHostController)
     }
 }
 
-@OptIn(ExperimentalSharedTransitionApi::class)
-fun NavGraphBuilder.detailsNavGraph(
-    navHostController: NavHostController,
-    sharedTransitionScope: SharedTransitionScope,
-) {
+fun NavGraphBuilder.detailsNavGraph(navHostController: NavHostController) {
     navigation(
         route = Graph.EDITNOTE,
         startDestination = Screen.EditNote.route
@@ -76,11 +63,7 @@ fun NavGraphBuilder.detailsNavGraph(
         ) { backStackEntry ->
             val noteId = backStackEntry.arguments?.getString(NOTE_ARGUMENT_KEY, "-1")
             if (noteId != null) {
-                sharedTransitionScope.EditNoteScreen(
-                    navController = navHostController,
-                    noteId = noteId,
-                    animatedContentScope = this@composable,
-                    )
+                EditNoteScreen(navController = navHostController,noteId = noteId)
             }
         }
     }
