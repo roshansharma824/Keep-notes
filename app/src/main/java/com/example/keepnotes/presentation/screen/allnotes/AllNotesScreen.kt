@@ -76,7 +76,7 @@ import com.example.keepnotes.ui.theme.TEXT_SIZE_18sp
 import com.example.keepnotes.ui.theme.TextColor
 import com.example.keepnotes.ui.theme.UndoTextColor
 import com.example.keepnotes.utils.showToast
-import com.mohamedrejeb.richeditor.model.rememberRichTextState
+import com.mohamedrejeb.richeditor.model.RichTextState
 import com.mohamedrejeb.richeditor.ui.material3.RichText
 import kotlinx.coroutines.launch
 
@@ -215,7 +215,7 @@ fun AllNotesScreen(
         },
         isFloatingActionButtonDocked = true
 
-        ) {
+    ) {
 
 
         Column(
@@ -285,28 +285,22 @@ fun NoteCard(
     onLongClick: () -> Unit,
     isSelected: Boolean
 ) {
+    val richTextState = remember { RichTextState() }
+    val note = remember(item.item?.note) { item.item?.note }
 
-    val richTextState = rememberRichTextState()
-
-    item.item?.note?.let {
-        richTextState.setHtml(it)
+    LaunchedEffect(note) {
+        note?.let { richTextState.setHtml(it) }
     }
 
-
     Card(
-        border = if (isSelected) BorderStroke(
-            width = DIMENS_3dp,
-            color = SelectedCardBorder
-        ) else BorderStroke(width = DIMENS_1dp, color = CardBorder),
+        border = BorderStroke(
+            width = if (isSelected) DIMENS_3dp else DIMENS_1dp,
+            color = if (isSelected) SelectedCardBorder else CardBorder
+        ),
         shape = RoundedCornerShape(size = DIMENS_12dp),
         modifier = Modifier.combinedClickable(
-            onClick = {
-                onClick.invoke()
-            },
-            onLongClick = {
-                onLongClick.invoke()
-//                allNotesViewModel.deleteNote("${item.key}")
-            },
+            onClick = onClick,
+            onLongClick = onLongClick
         )
     ) {
         Column(
@@ -323,11 +317,10 @@ fun NoteCard(
                 )
         ) {
             Text(
-                text = item.item?.title!!,
+                text = item.item?.title ?: "",
                 style = TextStyle(
                     fontSize = TEXT_SIZE_18sp,
                     lineHeight = 20.sp,
-
                     fontWeight = FontWeight(400),
                     color = GrayTextColor,
                     textAlign = TextAlign.Left
@@ -335,29 +328,15 @@ fun NoteCard(
                 textAlign = TextAlign.Left
             )
 
-//            Text(
-//                text = item.item.note!!,
-//                style = TextStyle(
-//                    fontSize = TEXT_SIZE_14sp,
-//                    lineHeight = 20.sp,
-//
-//                    fontWeight = FontWeight(400),
-//                    color = GrayTextColor,
-//                    textAlign = TextAlign.Left
-//
-//                )
-//            )
-
             RichText(
                 state = richTextState,
                 color = Color.White,
-                modifier = Modifier
-                    .fillMaxWidth()
+                modifier = Modifier.fillMaxWidth()
             )
         }
     }
-
 }
+
 
 
 @Preview(showBackground = true)
