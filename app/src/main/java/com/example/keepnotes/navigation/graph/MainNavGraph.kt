@@ -34,18 +34,12 @@ fun MainNavGraph(navHostController: NavHostController = rememberNavController())
             startDestination = BottomNavItemScreen.Home.route
         ) {
             composable(route = BottomNavItemScreen.Home.route) {
-                RootScreen(
-                    navController = navHostController,
-                    sharedTransitionScope = this@SharedTransitionLayout,
-                    animatedContentScope = this@composable
+                RootScreen(navController = navHostController,
+                    sharedTransitionScope = this@SharedTransitionLayout, animatedContentScope = this@composable
                 )
             }
             composable(route = BottomNavItemScreen.Search.route) {
-                SearchNotesScreen(
-                    navController = navHostController,
-                    sharedTransitionScope = this@SharedTransitionLayout,
-                    animatedContentScope = this@composable
-                )
+                SearchNotesScreen(navController = navHostController)
             }
             composable(route = BottomNavItemScreen.CheckListNote.route) {
                 CheckListNote()
@@ -86,7 +80,7 @@ fun NavGraphBuilder.detailsNavGraph(
                     navController = navHostController,
                     noteId = noteId,
                     animatedContentScope = this@composable,
-                )
+                    )
             }
         }
     }
