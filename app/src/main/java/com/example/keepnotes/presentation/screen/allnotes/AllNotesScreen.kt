@@ -3,9 +3,6 @@ package com.example.keepnotes.presentation.screen.allnotes
 import android.util.Log
 import android.widget.Toast
 import androidx.activity.compose.BackHandler
-import androidx.compose.animation.AnimatedContentScope
-import androidx.compose.animation.ExperimentalSharedTransitionApi
-import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
@@ -35,6 +32,7 @@ import androidx.compose.material.SnackbarResult
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.Card
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -83,16 +81,12 @@ import com.mohamedrejeb.richeditor.ui.material3.RichText
 import kotlinx.coroutines.launch
 
 
-@OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
-fun SharedTransitionScope.AllNotesScreen(
+fun AllNotesScreen(
     openDrawer: () -> Unit,
     navController: NavController,
     allNotesViewModel: AllNotesViewModel = hiltViewModel(),
-    animatedContentScope: AnimatedContentScope,
 ) {
-
-    Log.d("AllNotesScreen","recompose")
 
 
 
@@ -265,8 +259,7 @@ fun SharedTransitionScope.AllNotesScreen(
                                     isInSelectionMode = true
                                     selectedItems.add(item.key!!)
                                 }
-                            },
-                            animatedContentScope = animatedContentScope
+                            }
                         )
                     }
                 }
@@ -284,16 +277,13 @@ fun SharedTransitionScope.AllNotesScreen(
 
 }
 
-@OptIn(ExperimentalFoundationApi::class,
-    ExperimentalSharedTransitionApi::class
-)
+@OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
 @Composable
-fun SharedTransitionScope.NoteCard(
+fun NoteCard(
     item: RealtimeModelResponse,
     onClick: () -> Unit,
     onLongClick: () -> Unit,
-    isSelected: Boolean,
-    animatedContentScope: AnimatedContentScope,
+    isSelected: Boolean
 ) {
 
     val richTextState = rememberRichTextState()
@@ -342,21 +332,27 @@ fun SharedTransitionScope.NoteCard(
                     color = GrayTextColor,
                     textAlign = TextAlign.Left
                 ),
-                textAlign = TextAlign.Left,
-                modifier = Modifier.sharedElement(
-                    state = rememberSharedContentState(key = "title-${item.item.title}"),
-                    animatedVisibilityScope = animatedContentScope
-                )
+                textAlign = TextAlign.Left
             )
+
+//            Text(
+//                text = item.item.note!!,
+//                style = TextStyle(
+//                    fontSize = TEXT_SIZE_14sp,
+//                    lineHeight = 20.sp,
+//
+//                    fontWeight = FontWeight(400),
+//                    color = GrayTextColor,
+//                    textAlign = TextAlign.Left
+//
+//                )
+//            )
 
             RichText(
                 state = richTextState,
                 color = Color.White,
                 modifier = Modifier
-                    .sharedElement(
-                        state = rememberSharedContentState(key = "note-${item.key}"),
-                        animatedVisibilityScope = animatedContentScope
-                    ).fillMaxWidth()
+                    .fillMaxWidth()
             )
         }
     }

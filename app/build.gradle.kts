@@ -57,70 +57,62 @@ dependencies {
 
     implementation("androidx.core:core-ktx:1.9.0")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.6.2")
+    implementation("androidx.activity:activity-compose:1.8.1")
+    implementation(platform("androidx.compose:compose-bom:2023.03.00"))
+    implementation("androidx.compose.ui:ui")
+    implementation("androidx.compose.ui:ui-graphics")
+    implementation("androidx.compose.ui:ui-tooling-preview")
+    implementation("androidx.compose.material:material:1.6.5")
+    implementation("androidx.compose.material3:material3:1.2.1")
+    implementation("androidx.compose.material3:material3-window-size-class:1.1.2")
+    implementation("androidx.lifecycle:lifecycle-runtime-compose:2.7.0")
+    implementation("androidx.constraintlayout:constraintlayout-compose:1.0.1")
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
+    androidTestImplementation(platform("androidx.compose:compose-bom:2023.03.00"))
+    androidTestImplementation("androidx.compose.ui:ui-test-junit4")
+    debugImplementation("androidx.compose.ui:ui-tooling")
+    debugImplementation("androidx.compose.ui:ui-test-manifest")
 
-    // compose
-    implementation("androidx.activity:activity-compose:1.9.0")
-//    androidTestImplementation(platform("androidx.compose:compose-bom:2023.03.00"))
-    implementation("androidx.compose.ui:ui:1.7.0-beta01")
-    implementation("androidx.compose.ui:ui-graphics:1.7.0-beta01")
-    implementation("androidx.compose.ui:ui-tooling-preview:1.7.0-beta01")
-    implementation("androidx.compose.material:material:1.6.7")
-    implementation("androidx.compose.material3:material3:1.2.1")
-    implementation("androidx.compose.material3:material3-window-size-class:1.2.1")
-    implementation("androidx.lifecycle:lifecycle-runtime-compose:2.7.0")
-    implementation("androidx.constraintlayout:constraintlayout-compose:1.0.1")
-    androidTestImplementation("androidx.compose.ui:ui-test-junit4:1.7.0-beta01")
-    debugImplementation("androidx.compose.ui:ui-tooling:1.7.0-beta01")
-    debugImplementation("androidx.compose.ui:ui-test-manifest:1.7.0-beta01")
-    val nav_version = "2.7.7"
-
-    implementation("androidx.navigation:navigation-compose:$nav_version")
-
-    implementation("androidx.compose.ui:ui:1.7.0-alpha07")
-    implementation("androidx.compose.animation:animation:1.7.0-alpha07")
-
-    implementation("com.mohamedrejeb.richeditor:richeditor-compose:1.0.0-rc04")
-    implementation("androidx.compose.material:material-icons-extended-android:1.6.7")
-
-    implementation("io.coil-kt:coil-compose:2.6.0")
-    implementation("io.coil-kt:coil-gif:2.6.0")
-
-
-    // dagger hilt
     implementation("com.google.dagger:hilt-android:2.48")
     kapt("com.google.dagger:hilt-android-compiler:2.48")
-    implementation("androidx.hilt:hilt-navigation-compose:1.2.0")
 
     // System UI Controller - Accompanist
     implementation("com.google.accompanist:accompanist-systemuicontroller:0.21.2-beta")
 
+    implementation("androidx.hilt:hilt-navigation-compose:1.2.0")
     // Testing
     androidTestImplementation("androidx.navigation:navigation-testing:2.7.7")
 
     // Room Components
     val room_version = "2.6.0"
+
     implementation("androidx.room:room-runtime:$room_version")
     annotationProcessor("androidx.room:room-compiler:$room_version")
+
     // To use Kotlin annotation processing tool (kapt)
     ksp("androidx.room:room-compiler:$room_version")
     // To use Kotlin Symbol Processing (KSP)
     ksp("androidx.room:room-compiler:$room_version")
+
     // optional - Kotlin Extensions and Coroutines support for Room
     implementation("androidx.room:room-ktx:$room_version")
 
     // Firebase
-    implementation(platform("com.google.firebase:firebase-bom:33.0.0"))
+    implementation(platform("com.google.firebase:firebase-bom:32.7.4"))
     implementation("com.google.firebase:firebase-analytics")
-    implementation("com.google.android.gms:play-services-auth:21.1.1")
-    implementation("com.google.firebase:firebase-auth:23.0.0")
-    implementation("com.google.firebase:firebase-firestore:25.0.0")
-    implementation("com.google.firebase:firebase-storage:21.0.0")
+//    implementation("com.google.android.gms:play-services-auth:21.0.0")
+    implementation("com.google.firebase:firebase-auth:22.3.1")
+    implementation("com.google.firebase:firebase-firestore:24.10.3")
+    implementation("com.google.firebase:firebase-storage:20.3.0")
     implementation("com.google.firebase:firebase-database")
+    implementation("io.coil-kt:coil-compose:2.6.0")
+    implementation("io.coil-kt:coil-gif:2.6.0")
     implementation("com.squareup.okhttp3:okhttp:4.12.0")
 
+    implementation("com.mohamedrejeb.richeditor:richeditor-compose:1.0.0-rc04")
+    implementation("androidx.compose.material:material-icons-extended-android:1.6.5")
     //Preferences DataStore
     implementation("androidx.datastore:datastore-preferences:1.1.1")
 
@@ -142,7 +134,6 @@ dependencies {
     // Gson needed for Proguard rules for JWT Decoder library (For now).
     // Because JWT Decoder doesn't add those Proguard rules by default.
     implementation("com.google.code.gson:gson:2.10.1")
-
 }
 
 // Allow references to generated code
