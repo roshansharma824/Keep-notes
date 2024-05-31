@@ -35,7 +35,6 @@ import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -45,21 +44,16 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.window.Dialog
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.keepnotes.R
 import com.example.keepnotes.presentation.common.ProgressIndicator
 import com.example.keepnotes.presentation.component.EditNoteBottomBar
-import com.example.keepnotes.presentation.component.KeepNoteLinkDialog
-import com.example.keepnotes.presentation.component.KeepNotePanel
 import com.example.keepnotes.presentation.screen.editnote.EditNoteViewModel
 import com.example.keepnotes.presentation.screen.editnote.EditableTextField
 import com.example.keepnotes.ui.theme.BackgroundColor
 import com.example.keepnotes.ui.theme.DIMENS_16dp
-import com.example.keepnotes.ui.theme.DIMENS_24dp
 import com.example.keepnotes.ui.theme.DIMENS_40dp
 import com.example.keepnotes.ui.theme.GrayTextColor
 import com.example.keepnotes.utils.showToast
@@ -84,24 +78,14 @@ fun SharedTransitionScope.CheckListNote(
     animatedContentScope: AnimatedContentScope,
 ){
     var titleInput by remember { mutableStateOf("") }
-    var noteInput by remember { mutableStateOf("") }
     var isShowTextEditorPanel by remember { mutableStateOf(false) }
     val context = LocalContext.current
 
-    val richTextState = rememberRichTextState()
+//    val richTextState = rememberRichTextState()
 
 
-    val openLinkDialog = remember { mutableStateOf(false) }
 
-    LaunchedEffect(Unit) {
-        richTextState.setConfig(
-            linkColor = Color(0xFF1d9bd1),
-            linkTextDecoration = TextDecoration.None,
-            codeColor = Color(0xFFd7882d),
-            codeBackgroundColor = Color.Transparent,
-            codeStrokeColor = Color(0xFF494b4d),
-        )
-    }
+
 
 
     val note by editNoteViewModel.note.collectAsState()
@@ -121,10 +105,7 @@ fun SharedTransitionScope.CheckListNote(
         note.item.item?.title?.let {
             titleInput = it
         }
-        note.item.item?.note?.let {
-            noteInput = it
-            richTextState.setHtml(it)
-        }
+
     }
 
 
@@ -150,17 +131,17 @@ fun SharedTransitionScope.CheckListNote(
         },
         bottomBar = {
             if (isShowTextEditorPanel){
-                KeepNotePanel(
-                    state = richTextState,
-                    openLinkDialog = openLinkDialog,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = 20.dp)
-                        .padding(horizontal = 20.dp),
-                    onCloseEditor = {
-                        isShowTextEditorPanel = !isShowTextEditorPanel
-                    }
-                )
+//                KeepNotePanel(
+//                    state = richTextState,
+//                    openLinkDialog = openLinkDialog,
+//                    modifier = Modifier
+//                        .fillMaxWidth()
+//                        .padding(top = 20.dp)
+//                        .padding(horizontal = 20.dp),
+//                    onCloseEditor = {
+//                        isShowTextEditorPanel = !isShowTextEditorPanel
+//                    }
+//                )
             }else{
                 EditNoteBottomBar(
                     updatedAt = note.item.item?.updatedAt ?: System.currentTimeMillis(),
@@ -189,53 +170,26 @@ fun SharedTransitionScope.CheckListNote(
                 EditableTextField(text = titleInput, placeholderText = "Title", animatedContentScope) { newText ->
                     titleInput = newText
                 }
-                VerticalReorderList()
+                VerticalReorderList(editNoteViewModel)
 
             }
 
-            if (openLinkDialog.value)
-                Dialog(
-                    onDismissRequest = {
-                        openLinkDialog.value = false
-                    }
-                ) {
-                    KeepNoteLinkDialog(
-                        state = richTextState,
-                        openLinkDialog = openLinkDialog
-                    )
-                }
-        }
-    }
-    DisposableEffect(Unit) {
-        onDispose {
-
-            editNoteViewModel.updateNote(richTextState.toHtml())
-            editNoteViewModel.updateTitle(titleInput)
-            if (titleInput.isNotEmpty() || richTextState.annotatedString.text.isNotEmpty()) {
-                if (noteId == "-1") {
-                    editNoteViewModel.addNote()
-                } else {
-                    editNoteViewModel.updateNote()
-                }
-
-            }
 
         }
     }
 }
 
-
+data class CheckNote(
+    val index: Int = 0,
+    val content: String = "",
+    val isChecked: Boolean = false
+)
 
 @Composable
-fun VerticalReorderList() {
-    val size = remember {
-        mutableIntStateOf(1)
-    }
-    val data = remember { mutableStateOf(List(size.intValue) { "item $it" }) }
+fun VerticalReorderList(editNoteViewModel: EditNoteViewModel) {
+    val data = editNoteViewModel.data
     val state = rememberReorderableLazyListState(onMove = { from, to ->
-        data.value = data.value.toMutableList().apply {
-            add(to.index, removeAt(from.index))
-        }
+        editNoteViewModel.moveCheckNote(from.index, to.index)
     })
 
     LazyColumn(
@@ -244,54 +198,59 @@ fun VerticalReorderList() {
             .reorderable(state)
             .detectReorderAfterLongPress(state)
     ) {
-        items(data.value, { it }) { item ->
-            ReorderableItem(state, key = item) { isDragging ->
+        items(data, { it.index }) { item ->
+            ReorderableItem(state, key = item.index) { isDragging ->
                 val elevation = animateDpAsState(if (isDragging) 16.dp else 0.dp, label = "")
                 Column(
                     modifier = Modifier
                         .shadow(elevation.value)
-                        .background(BackgroundColor)
+                        .background(Color.White)
                 ) {
-                    CheckBoxNotes()
+                    CheckBoxNotes(item, editNoteViewModel)
                 }
             }
         }
     }
 
-    IconButton(onClick = {
-        size.intValue += 1
-        data.value = data.value.toMutableList().apply {
-            add("item ${size.intValue}")
-        }
-    }, modifier = Modifier.fillMaxWidth(0.45f)) {
-        Row(verticalAlignment = Alignment.CenterVertically,) {
+    IconButton(
+        onClick = { editNoteViewModel.addCheckNote() },
+        modifier = Modifier.fillMaxWidth(0.45f)
+    ) {
+        Row(verticalAlignment = Alignment.CenterVertically) {
             Icon(
                 Icons.Outlined.Add,
-                contentDescription = "icon.name",
-                tint = GrayTextColor,
-                modifier = Modifier
-                    .padding(6.dp)
+                contentDescription = "Add item",
+                tint = Color.Gray,
+                modifier = Modifier.padding(6.dp)
             )
-            Text(text = "List item", color = GrayTextColor)
+            Text(text = "List item", color = Color.Gray)
         }
-
     }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CheckBoxNotes(){
+fun CheckBoxNotes(item: CheckNote, editNoteViewModel: EditNoteViewModel) {
     val richTextState = rememberRichTextState()
-    var checked by remember { mutableStateOf(false) }
+    var checked by remember { mutableStateOf(item.isChecked) }
+    var content by remember { mutableStateOf(item.content) }
+
     Row(
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier.padding(horizontal = DIMENS_16dp)
     ) {
-        Icon(painter = painterResource(R.drawable.drag), contentDescription ="", tint = GrayTextColor, modifier = Modifier.size(
-            DIMENS_24dp) )
+        Icon(
+            painter = painterResource(R.drawable.drag),
+            contentDescription = "",
+            tint = Color.Gray,
+            modifier = Modifier.size(24.dp)
+        )
         Checkbox(
             checked = checked,
-            onCheckedChange = { checked = it }
+            onCheckedChange = {
+                checked = it
+                editNoteViewModel.updateCheckNoteChecked(item.index, it)
+            }
         )
         RichTextEditor(
             state = richTextState,
@@ -300,7 +259,7 @@ fun CheckBoxNotes(){
                     text = "Note",
                 )
             },
-            textStyle = MaterialTheme.typography.titleMedium.copy(color = GrayTextColor),
+            textStyle = MaterialTheme.typography.titleMedium.copy(color = Color.Gray),
             colors = RichTextEditorDefaults.richTextEditorColors(
                 textColor = Color(0xFFCBCCCD),
                 containerColor = Color.Transparent,
@@ -312,5 +271,11 @@ fun CheckBoxNotes(){
                 .fillMaxWidth()
         )
 
+        // Listen for changes in RichTextEditor and update ViewModel state
+        DisposableEffect(Unit)  {
+            onDispose {
+                editNoteViewModel.updateCheckNoteContent(item.index, richTextState.toHtml())
+            }
+        }
     }
 }
