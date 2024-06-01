@@ -25,6 +25,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -64,6 +65,7 @@ fun EditNoteScreen(
     val uiState by editNoteViewModel.uiState.collectAsState()
 
     val richTextState = rememberRichTextState()
+    val titleTextState = remember { mutableStateOf(uiState.title) }
     val openLinkDialog = remember { mutableStateOf(false) }
     var isShowTextEditorPanel by remember { mutableStateOf(false) }
 
@@ -74,6 +76,7 @@ fun EditNoteScreen(
     }
 
     LaunchedEffect(uiState.note) {
+        titleTextState.value = uiState.title
         richTextState.setHtml(uiState.note)
     }
 
@@ -95,7 +98,7 @@ fun EditNoteScreen(
             }
         },
         bottomBar = {
-            if (isShowTextEditorPanel){
+            if (isShowTextEditorPanel) {
                 KeepNotePanel(
                     state = richTextState,
                     openLinkDialog = openLinkDialog,
@@ -130,15 +133,10 @@ fun EditNoteScreen(
                 ProgressIndicator()
             } else {
                 EditableTextField(
-                    text = uiState.title,
+                    initialText = titleTextState,
                     placeholderText = "Title"
                 ) { newText ->
-                    val timestamp = System.currentTimeMillis()
-                    editNoteViewModel.onEvent(EditNoteEvent.UpdateNote(
-                        title = newText,
-                        note = richTextState.toHtml(),
-                        timestamp = timestamp
-                    ))
+//                    titleTextState.value = newText
                 }
 
                 RichTextEditor(
@@ -175,21 +173,16 @@ fun EditNoteScreen(
     DisposableEffect(Unit) {
         onDispose {
             val timestamp = System.currentTimeMillis()
-            editNoteViewModel.onEvent(EditNoteEvent.UpdateNote(
-                title = uiState.title,
-                note = richTextState.toHtml(),
-                timestamp = timestamp
-            ))
-            if (uiState.title.isNotEmpty() || richTextState.annotatedString.text.isNotEmpty()) {
+            if (titleTextState.value.isNotEmpty() || richTextState.annotatedString.text.isNotEmpty()) {
                 if (noteId == "-1") {
                     editNoteViewModel.onEvent(EditNoteEvent.AddNote(
-                        title = uiState.title,
+                        title = titleTextState.value,
                         note = richTextState.toHtml(),
                         timestamp = timestamp
                     ))
                 } else {
-                    editNoteViewModel.onEvent(EditNoteEvent.UpdateNoteSave(
-                        title = uiState.title,
+                    editNoteViewModel.onEvent(EditNoteEvent.UpdateNote(
+                        title = titleTextState.value,
                         note = richTextState.toHtml(),
                         timestamp = timestamp
                     ))
@@ -201,15 +194,17 @@ fun EditNoteScreen(
 
 @Composable
 fun EditableTextField(
-    text: String,
+    initialText: MutableState<String>,
     placeholderText: String,
     onTextChanged: (String) -> Unit
 ) {
+//    var text by remember { mutableStateOf(initialText) }
     var isKeyboardVisible by remember { mutableStateOf(false) }
 
     TextField(
-        value = text,
+        value = initialText.value,
         onValueChange = {
+            initialText.value = it
             onTextChanged(it)
         },
         placeholder = {
@@ -254,6 +249,7 @@ fun EditableTextField(
         }
     }
 }
+
 
 
 @Preview(showBackground = true)

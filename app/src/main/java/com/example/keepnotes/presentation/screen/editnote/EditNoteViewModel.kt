@@ -26,12 +26,6 @@ sealed class EditNoteEvent {
         val timestamp: Long
     ) : EditNoteEvent()
 
-    data class UpdateNoteSave(
-        val title: String,
-        val note: String,
-        val timestamp: Long
-    ) : EditNoteEvent()
-
     data class GetNote(
         val noteId: String
     ) : EditNoteEvent()
@@ -73,18 +67,11 @@ class EditNoteViewModel @Inject constructor(
                     timestamp = event.timestamp
                 )
             }
-            is EditNoteEvent.UpdateNote -> {
-                _uiState.value = _uiState.value.copy(
-                    title = event.title,
-                    note = event.note,
-                    timestamp = event.timestamp
-                )
-            }
             is EditNoteEvent.GetNote -> getNote(
                 noteId = event.noteId
             )
 
-            is EditNoteEvent.UpdateNoteSave -> {
+            is EditNoteEvent.UpdateNote -> {
                 updateNote(
                     title = event.title,
                     note = event.note,
