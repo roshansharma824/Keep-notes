@@ -88,7 +88,7 @@ fun AllNotesScreen(
 
     var isInSelectionMode by remember { mutableStateOf(false) }
     val selectedItems = remember { mutableStateListOf<String>() }
-    val resetSelectionMode by rememberUpdatedState {
+    val resetSelectionMode: () -> Unit by rememberUpdatedState {
         isInSelectionMode = false
         selectedItems.clear()
     }
@@ -183,7 +183,7 @@ fun AllNotesScreen(
                         NoteCard(
                             item = item,
                             isSelected = isSelected,
-                            onClick =  {
+                            onClick = {
                                 if (isInSelectionMode) {
                                     if (isSelected) selectedItems.remove(item.key)
                                     else selectedItems.add(item.key!!)
@@ -191,7 +191,7 @@ fun AllNotesScreen(
                                     navController.navigate(Screen.EditNote.passNoteId(noteId = item.key!!))
                                 }
                             },
-                            onLongClick =  {
+                            onLongClick = {
                                 if (isInSelectionMode) {
                                     if (isSelected) selectedItems.remove(item.key)
                                     else selectedItems.add(item.key!!)
@@ -210,7 +210,6 @@ fun AllNotesScreen(
         }
     }
 }
-
 
 @OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
 @Composable
@@ -244,12 +243,7 @@ fun NoteCard(
             modifier = Modifier
                 .fillMaxWidth()
                 .background(color = BackgroundColor, shape = RoundedCornerShape(size = DIMENS_8dp))
-                .padding(
-                    start = DIMENS_12dp,
-                    top = DIMENS_12dp,
-                    end = DIMENS_12dp,
-                    bottom = DIMENS_12dp
-                )
+                .padding(DIMENS_12dp)
         ) {
             Text(
                 text = item.item?.title.orEmpty(),
