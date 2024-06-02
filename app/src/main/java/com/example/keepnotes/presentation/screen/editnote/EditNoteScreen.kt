@@ -33,8 +33,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -175,17 +178,21 @@ fun EditNoteScreen(
             val timestamp = System.currentTimeMillis()
             if (titleTextState.value.isNotEmpty() || richTextState.annotatedString.text.isNotEmpty()) {
                 if (noteId == "-1") {
-                    editNoteViewModel.onEvent(EditNoteEvent.AddNote(
-                        title = titleTextState.value,
-                        note = richTextState.toHtml(),
-                        timestamp = timestamp
-                    ))
+                    editNoteViewModel.onEvent(
+                        EditNoteEvent.AddNote(
+                            title = titleTextState.value,
+                            note = richTextState.toHtml(),
+                            timestamp = timestamp
+                        )
+                    )
                 } else {
-                    editNoteViewModel.onEvent(EditNoteEvent.UpdateNote(
-                        title = titleTextState.value,
-                        note = richTextState.toHtml(),
-                        timestamp = timestamp
-                    ))
+                    editNoteViewModel.onEvent(
+                        EditNoteEvent.UpdateNote(
+                            title = titleTextState.value,
+                            note = richTextState.toHtml(),
+                            timestamp = timestamp
+                        )
+                    )
                 }
             }
         }
@@ -200,6 +207,11 @@ fun EditableTextField(
 ) {
 //    var text by remember { mutableStateOf(initialText) }
     var isKeyboardVisible by remember { mutableStateOf(false) }
+    val focusRequester = remember { FocusRequester() }
+    val keyboardController = LocalSoftwareKeyboardController.current
+    LaunchedEffect(Unit) {
+        focusRequester.requestFocus()
+    }
 
     TextField(
         value = initialText.value,
@@ -221,7 +233,13 @@ fun EditableTextField(
         ) else MaterialTheme.typography.titleMedium.copy(color = GrayTextColor),
         modifier = Modifier
             .fillMaxWidth()
-            .onFocusChanged { isKeyboardVisible = it.isFocused },
+            .focusRequester(focusRequester)
+            .onFocusChanged {
+                isKeyboardVisible = it.isFocused
+                if (it.isFocused) {
+                    keyboardController?.show()
+                }
+            },
         colors = TextFieldDefaults.outlinedTextFieldColors(
             backgroundColor = BackgroundColor,
             focusedBorderColor = BackgroundColor,
@@ -249,7 +267,6 @@ fun EditableTextField(
         }
     }
 }
-
 
 
 @Preview(showBackground = true)
