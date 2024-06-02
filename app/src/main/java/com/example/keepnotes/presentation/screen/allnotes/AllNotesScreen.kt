@@ -67,6 +67,7 @@ import com.example.keepnotes.ui.theme.DIMENS_1dp
 import com.example.keepnotes.ui.theme.DIMENS_3dp
 import com.example.keepnotes.ui.theme.DIMENS_40dp
 import com.example.keepnotes.ui.theme.DIMENS_8dp
+import com.example.keepnotes.ui.theme.GrayBackground
 import com.example.keepnotes.ui.theme.GrayTextColor
 import com.example.keepnotes.ui.theme.SelectedCardBorder
 import com.example.keepnotes.ui.theme.TEXT_SIZE_18sp
@@ -134,7 +135,11 @@ fun AllNotesScreen(
                                 duration = SnackbarDuration.Long
                             )
                             when (result) {
-                                SnackbarResult.ActionPerformed -> Log.d("SnackbarResult", "ActionPerformed")
+                                SnackbarResult.ActionPerformed -> Log.d(
+                                    "SnackbarResult",
+                                    "ActionPerformed"
+                                )
+
                                 SnackbarResult.Dismissed -> Log.d("SnackbarResult", "Dismissed")
                             }
                         }
@@ -162,7 +167,12 @@ fun AllNotesScreen(
                 contentColor = TextColor,
                 shape = RoundedCornerShape(DIMENS_16dp)
             ) {
-                Icon(Icons.Default.Add, contentDescription = "New Note", modifier = Modifier.size(DIMENS_40dp))
+                Icon(
+                    Icons.Default.Add,
+                    contentDescription = "New Note",
+                    modifier = Modifier.size(DIMENS_40dp),
+                    tint = GrayBackground
+                )
             }
         },
         isFloatingActionButtonDocked = true
@@ -264,8 +274,6 @@ fun NoteCard(
         }
     }
 }
-
-
 
 
 @Preview(showBackground = true)
