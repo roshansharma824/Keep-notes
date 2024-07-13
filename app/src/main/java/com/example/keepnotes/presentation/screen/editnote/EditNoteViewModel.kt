@@ -1,11 +1,14 @@
 package com.example.keepnotes.presentation.screen.editnote
 
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.keepnotes.data.local.InMemoryCache
 import com.example.keepnotes.domain.model.RealtimeModelResponse
 import com.example.keepnotes.domain.model.ResultState
 import com.example.keepnotes.domain.usecase.UseCases
+import com.example.keepnotes.presentation.screen.checklistnote.CheckNote
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -151,6 +154,32 @@ class EditNoteViewModel @Inject constructor(
                     )
                 }
             }
+        }
+    }
+
+
+    private val _data = mutableStateListOf<CheckNote>()
+    val data: SnapshotStateList<CheckNote> get() = _data
+
+    fun addCheckNote() {
+        _data.add(CheckNote(index = _data.size + 1))
+    }
+
+    fun moveCheckNote(fromIndex: Int, toIndex: Int) {
+        if (fromIndex in 0 until _data.size && toIndex in 0 until _data.size) {
+            _data.add(toIndex, _data.removeAt(fromIndex))
+        }
+    }
+
+    fun updateCheckNoteContent(index: Int, content: String) {
+        if (index in 0 until _data.size) {
+            _data[index] = _data[index].copy(content = content)
+        }
+    }
+
+    fun updateCheckNoteChecked(index: Int, isChecked: Boolean) {
+        if (index in 0 until _data.size) {
+            _data[index] = _data[index].copy(isChecked = isChecked)
         }
     }
 }

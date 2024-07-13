@@ -1,10 +1,6 @@
 package com.example.keepnotes.presentation.screen.checklistnote
 
 
-import android.widget.Toast
-import androidx.compose.animation.AnimatedContentScope
-import androidx.compose.animation.ExperimentalSharedTransitionApi
-import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -42,7 +38,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -50,14 +45,14 @@ import androidx.navigation.NavController
 import com.example.keepnotes.R
 import com.example.keepnotes.presentation.common.ProgressIndicator
 import com.example.keepnotes.presentation.component.EditNoteBottomBar
+import com.example.keepnotes.presentation.component.KeepNotePanel
+import com.example.keepnotes.presentation.screen.editnote.EditNoteEvent
 import com.example.keepnotes.presentation.screen.editnote.EditNoteViewModel
 import com.example.keepnotes.presentation.screen.editnote.EditableTextField
 import com.example.keepnotes.ui.theme.BackgroundColor
 import com.example.keepnotes.ui.theme.DIMENS_16dp
 import com.example.keepnotes.ui.theme.DIMENS_40dp
 import com.example.keepnotes.ui.theme.GrayTextColor
-import com.example.keepnotes.utils.showToast
-import com.mohamedrejeb.richeditor.annotation.ExperimentalRichTextApi
 import com.mohamedrejeb.richeditor.model.rememberRichTextState
 import com.mohamedrejeb.richeditor.ui.material3.RichTextEditor
 import com.mohamedrejeb.richeditor.ui.material3.RichTextEditorDefaults
@@ -66,46 +61,31 @@ import org.burnoutcrew.reorderable.detectReorderAfterLongPress
 import org.burnoutcrew.reorderable.rememberReorderableLazyListState
 import org.burnoutcrew.reorderable.reorderable
 
-@OptIn(
-    ExperimentalRichTextApi::class, ExperimentalMaterial3Api::class,
-    ExperimentalSharedTransitionApi::class
-)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SharedTransitionScope.CheckListNote(
+fun CheckListNote(
     navController: NavController,
     noteId: String = "-1",
     editNoteViewModel: EditNoteViewModel = hiltViewModel(),
-    animatedContentScope: AnimatedContentScope,
-){
-    var titleInput by remember { mutableStateOf("") }
+) {
+    val uiState by editNoteViewModel.uiState.collectAsState()
+
+    val richTextState = rememberRichTextState()
+    val titleTextState = remember { mutableStateOf(uiState.title) }
+    val openLinkDialog = remember { mutableStateOf(false) }
     var isShowTextEditorPanel by remember { mutableStateOf(false) }
-    val context = LocalContext.current
-
-//    val richTextState = rememberRichTextState()
 
 
 
-
-
-
-    val note by editNoteViewModel.note.collectAsState()
-
-    if (noteId != "-1") {
-        LaunchedEffect(Unit) {
-            editNoteViewModel.getNote(noteId)
+    LaunchedEffect(noteId) {
+        if (noteId != "-1") {
+            editNoteViewModel.onEvent(EditNoteEvent.GetNote(noteId))
         }
     }
 
-    if (note.error.isNotEmpty()) {
-        context.showToast(note.error, Toast.LENGTH_LONG)
-    }
-
-
-    LaunchedEffect(note.item.key) {
-        note.item.item?.title?.let {
-            titleInput = it
-        }
-
+    LaunchedEffect(uiState.note) {
+        titleTextState.value = uiState.title
+        richTextState.setHtml(uiState.note)
     }
 
 
@@ -130,21 +110,21 @@ fun SharedTransitionScope.CheckListNote(
             }
         },
         bottomBar = {
-            if (isShowTextEditorPanel){
-//                KeepNotePanel(
-//                    state = richTextState,
-//                    openLinkDialog = openLinkDialog,
-//                    modifier = Modifier
-//                        .fillMaxWidth()
-//                        .padding(top = 20.dp)
-//                        .padding(horizontal = 20.dp),
-//                    onCloseEditor = {
-//                        isShowTextEditorPanel = !isShowTextEditorPanel
-//                    }
-//                )
-            }else{
+            if (isShowTextEditorPanel) {
+                KeepNotePanel(
+                    state = richTextState,
+                    openLinkDialog = openLinkDialog,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 20.dp)
+                        .padding(horizontal = 20.dp),
+                    onCloseEditor = {
+                        isShowTextEditorPanel = !isShowTextEditorPanel
+                    }
+                )
+            } else {
                 EditNoteBottomBar(
-                    updatedAt = note.item.item?.updatedAt ?: System.currentTimeMillis(),
+                    updatedAt = System.currentTimeMillis(),
                     isShowTextEditorPanel = {
                         isShowTextEditorPanel = !isShowTextEditorPanel
                     }
@@ -163,12 +143,15 @@ fun SharedTransitionScope.CheckListNote(
                 .padding(it)
         ) {
 
-            if (note.isLoading) {
+            if (uiState.isLoading) {
                 ProgressIndicator()
             } else {
                 // Editable text
-                EditableTextField(text = titleInput, placeholderText = "Title", animatedContentScope) { newText ->
-                    titleInput = newText
+                EditableTextField(
+                    initialText = titleTextState,
+                    placeholderText = "Title"
+                ) { newText ->
+//                    titleInput = newText
                 }
                 VerticalReorderList(editNoteViewModel)
 
@@ -272,7 +255,7 @@ fun CheckBoxNotes(item: CheckNote, editNoteViewModel: EditNoteViewModel) {
         )
 
         // Listen for changes in RichTextEditor and update ViewModel state
-        DisposableEffect(Unit)  {
+        DisposableEffect(Unit) {
             onDispose {
                 editNoteViewModel.updateCheckNoteContent(item.index, richTextState.toHtml())
             }
