@@ -63,7 +63,7 @@ fun OneTapSignInWithGoogle(
         GetGoogleIdOption.Builder()
             .setServerClientId(clientId)
             .setNonce(nonce)
-            .setFilterByAuthorizedAccounts(rememberAccount)
+            .setFilterByAuthorizedAccounts(false)
             .build()
     }
 
