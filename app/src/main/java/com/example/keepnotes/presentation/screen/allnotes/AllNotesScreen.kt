@@ -6,11 +6,8 @@ import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
@@ -21,10 +18,10 @@ import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.foundation.lazy.staggeredgrid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.FloatingActionButton
 import androidx.compose.material.Icon
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Snackbar
-import androidx.compose.material.SnackbarData
 import androidx.compose.material.SnackbarDuration
 import androidx.compose.material.SnackbarHost
 import androidx.compose.material.SnackbarHostState
@@ -42,6 +39,7 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -68,15 +66,15 @@ import com.example.keepnotes.ui.theme.DIMENS_16dp
 import com.example.keepnotes.ui.theme.DIMENS_1dp
 import com.example.keepnotes.ui.theme.DIMENS_3dp
 import com.example.keepnotes.ui.theme.DIMENS_40dp
-import com.example.keepnotes.ui.theme.DIMENS_64dp
 import com.example.keepnotes.ui.theme.DIMENS_8dp
+import com.example.keepnotes.ui.theme.GrayBackground
 import com.example.keepnotes.ui.theme.GrayTextColor
 import com.example.keepnotes.ui.theme.SelectedCardBorder
 import com.example.keepnotes.ui.theme.TEXT_SIZE_18sp
 import com.example.keepnotes.ui.theme.TextColor
 import com.example.keepnotes.ui.theme.UndoTextColor
 import com.example.keepnotes.utils.showToast
-import com.mohamedrejeb.richeditor.model.rememberRichTextState
+import com.mohamedrejeb.richeditor.model.RichTextState
 import com.mohamedrejeb.richeditor.ui.material3.RichText
 import kotlinx.coroutines.launch
 
@@ -87,30 +85,20 @@ fun AllNotesScreen(
     navController: NavController,
     allNotesViewModel: AllNotesViewModel = hiltViewModel(),
 ) {
-
-
-
     val context = LocalContext.current
 
-    var isInSelectionMode by remember {
-        mutableStateOf(false)
-    }
-    val selectedItems = remember {
-        mutableStateListOf<String>()
-    }
-    val resetSelectionMode = {
+    var isInSelectionMode by remember { mutableStateOf(false) }
+    val selectedItems = remember { mutableStateListOf<String>() }
+    val resetSelectionMode: () -> Unit by rememberUpdatedState {
         isInSelectionMode = false
         selectedItems.clear()
     }
-    BackHandler(
-        enabled = isInSelectionMode,
-    ) {
+
+    BackHandler(enabled = isInSelectionMode) {
         resetSelectionMode()
     }
-    LaunchedEffect(
-        key1 = isInSelectionMode,
-        key2 = selectedItems.size,
-    ) {
+
+    LaunchedEffect(isInSelectionMode, selectedItems.size) {
         if (isInSelectionMode && selectedItems.isEmpty()) {
             isInSelectionMode = false
         }
@@ -118,110 +106,78 @@ fun AllNotesScreen(
 
     val allNotes by allNotesViewModel.allNotesList.collectAsState()
 
-    var changeView by remember {
-        mutableStateOf(false)
-    }
-
+    var changeView by remember { mutableStateOf(false) }
     val scope = rememberCoroutineScope()
     val snackbarHostState = remember { SnackbarHostState() }
 
     Scaffold(
         snackbarHost = {
-            SnackbarHost(hostState = snackbarHostState, snackbar = { snackbarData: SnackbarData ->
+            SnackbarHost(hostState = snackbarHostState) { snackbarData ->
                 Snackbar(
                     snackbarData = snackbarData,
                     actionColor = UndoTextColor,
                     contentColor = TextColor
                 )
-            })
+            }
         },
         topBar = {
-            if (isInSelectionMode)
+            if (isInSelectionMode) {
                 SelectedTopBar(
-                    onClickAction = {
-                        resetSelectionMode.invoke()
-                    },
-                    onClickMenu = {
-
-                    }, onDelete = {
+                    onClickAction = resetSelectionMode,
+                    onClickMenu = { },
+                    onDelete = {
                         allNotesViewModel.deleteNote(selectedItems[0])
-                        resetSelectionMode.invoke()
+                        resetSelectionMode()
                         scope.launch {
-                            val result = snackbarHostState
-                                .showSnackbar(
-                                    message = "Note Deleted Successfully..",
-                                    actionLabel = "Undo",
-                                    duration = SnackbarDuration.Long
-                                )
+                            val result = snackbarHostState.showSnackbar(
+                                message = "Note Deleted Successfully..",
+                                actionLabel = "Undo",
+                                duration = SnackbarDuration.Long
+                            )
                             when (result) {
-                                SnackbarResult.ActionPerformed -> {
-                                    Log.d("SnackbarResult", "ActionPerformed")
-                                }
+                                SnackbarResult.ActionPerformed -> Log.d(
+                                    "SnackbarResult",
+                                    "ActionPerformed"
+                                )
 
-                                SnackbarResult.Dismissed -> {
-                                    Log.d("SnackbarResult", "Dismissed")
-                                }
+                                SnackbarResult.Dismissed -> Log.d("SnackbarResult", "Dismissed")
                             }
                         }
                     },
                     onMakeCopy = {
                         allNotesViewModel.makeCopyNote(selectedItems[0])
-                        resetSelectionMode.invoke()
+                        resetSelectionMode()
                     },
                     selectItemCount = selectedItems.size
                 )
-            else
+            } else {
                 HomeScreenTopBar(
-                    onClickAction = { openDrawer.invoke() },
-                    onSearch = {
-                        navController.navigate(Screen.Search.route)
-                    },
-                    onChangeView = {
-                        changeView = !changeView
-                    }
+                    onClickAction = { openDrawer() },
+                    onSearch = { navController.navigate(Screen.Search.route) },
+                    onChangeView = { changeView = !changeView }
                 )
+            }
         },
         backgroundColor = BackgroundColor,
-        bottomBar = {
-            BottomBar(navController = navController)
-        },
+        bottomBar = { BottomBar(navController = navController) },
         floatingActionButton = {
-            Box(
-                modifier = Modifier
-                    .background(
-                        color = BottomBarBackgroundColor, shape = RoundedCornerShape(
-                            DIMENS_16dp
-                        )
-                    )
-                    .size(DIMENS_64dp)
-                    .border(
-                        shape = RoundedCornerShape(
-                            DIMENS_16dp
-                        ), width = DIMENS_8dp, color = BackgroundColor
-                    )
-                    .clickable {
-                        navController.navigate(Screen.EditNote.passNoteId(noteId = "-1"))
-                    },
-                contentAlignment = Alignment.Center
+            FloatingActionButton(
+                onClick = { navController.navigate(Screen.EditNote.passNoteId(noteId = "-1")) },
+                backgroundColor = BottomBarBackgroundColor,
+                contentColor = TextColor,
+                shape = RoundedCornerShape(DIMENS_16dp)
             ) {
                 Icon(
-                    imageVector = Icons.Default.Add,
+                    Icons.Default.Add,
                     contentDescription = "New Note",
-                    modifier = Modifier.size(
-                        DIMENS_40dp
-                    )
+                    modifier = Modifier.size(DIMENS_40dp),
+                    tint = GrayBackground
                 )
             }
         },
         isFloatingActionButtonDocked = true
-
-        ) {
-
-
-        Column(
-            modifier = Modifier.padding(it)
-        ) {
-
+    ) {
+        Column(modifier = Modifier.padding(it)) {
             if (allNotes.isLoading) {
                 ProgressIndicator()
             } else {
@@ -239,22 +195,16 @@ fun AllNotesScreen(
                             isSelected = isSelected,
                             onClick = {
                                 if (isInSelectionMode) {
-                                    if (isSelected) {
-                                        selectedItems.remove(item.key)
-                                    } else {
-                                        selectedItems.add(item.key!!)
-                                    }
+                                    if (isSelected) selectedItems.remove(item.key)
+                                    else selectedItems.add(item.key!!)
                                 } else {
-                                    navController.navigate(Screen.EditNote.passNoteId(noteId = "${item.key}"))
+                                    navController.navigate(Screen.EditNote.passNoteId(noteId = item.key!!))
                                 }
                             },
                             onLongClick = {
                                 if (isInSelectionMode) {
-                                    if (isSelected) {
-                                        selectedItems.remove(item.key)
-                                    } else {
-                                        selectedItems.add(item.key!!)
-                                    }
+                                    if (isSelected) selectedItems.remove(item.key)
+                                    else selectedItems.add(item.key!!)
                                 } else {
                                     isInSelectionMode = true
                                     selectedItems.add(item.key!!)
@@ -264,17 +214,11 @@ fun AllNotesScreen(
                     }
                 }
             }
-
-
             if (allNotes.error.isNotEmpty()) {
                 context.showToast(allNotes.error, Toast.LENGTH_LONG)
             }
         }
-
-
     }
-
-
 }
 
 @OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
@@ -285,28 +229,22 @@ fun NoteCard(
     onLongClick: () -> Unit,
     isSelected: Boolean
 ) {
+    val richTextState = remember { RichTextState() }
+    val note = remember(item.item?.note) { item.item?.note }
 
-    val richTextState = rememberRichTextState()
-
-    item.item?.note?.let {
-        richTextState.setHtml(it)
+    LaunchedEffect(note) {
+        note?.let { richTextState.setHtml(it) }
     }
 
-
     Card(
-        border = if (isSelected) BorderStroke(
-            width = DIMENS_3dp,
-            color = SelectedCardBorder
-        ) else BorderStroke(width = DIMENS_1dp, color = CardBorder),
+        border = BorderStroke(
+            width = if (isSelected) DIMENS_3dp else DIMENS_1dp,
+            color = if (isSelected) SelectedCardBorder else CardBorder
+        ),
         shape = RoundedCornerShape(size = DIMENS_12dp),
         modifier = Modifier.combinedClickable(
-            onClick = {
-                onClick.invoke()
-            },
-            onLongClick = {
-                onLongClick.invoke()
-//                allNotesViewModel.deleteNote("${item.key}")
-            },
+            onClick = onClick,
+            onLongClick = onLongClick
         )
     ) {
         Column(
@@ -315,48 +253,26 @@ fun NoteCard(
             modifier = Modifier
                 .fillMaxWidth()
                 .background(color = BackgroundColor, shape = RoundedCornerShape(size = DIMENS_8dp))
-                .padding(
-                    start = DIMENS_12dp,
-                    top = DIMENS_12dp,
-                    end = DIMENS_12dp,
-                    bottom = DIMENS_12dp
-                )
+                .padding(DIMENS_12dp)
         ) {
             Text(
-                text = item.item?.title!!,
+                text = item.item?.title.orEmpty(),
                 style = TextStyle(
                     fontSize = TEXT_SIZE_18sp,
                     lineHeight = 20.sp,
-
                     fontWeight = FontWeight(400),
                     color = GrayTextColor,
                     textAlign = TextAlign.Left
-                ),
-                textAlign = TextAlign.Left
+                )
             )
-
-//            Text(
-//                text = item.item.note!!,
-//                style = TextStyle(
-//                    fontSize = TEXT_SIZE_14sp,
-//                    lineHeight = 20.sp,
-//
-//                    fontWeight = FontWeight(400),
-//                    color = GrayTextColor,
-//                    textAlign = TextAlign.Left
-//
-//                )
-//            )
 
             RichText(
                 state = richTextState,
                 color = Color.White,
-                modifier = Modifier
-                    .fillMaxWidth()
+                modifier = Modifier.fillMaxWidth()
             )
         }
     }
-
 }
 
 
